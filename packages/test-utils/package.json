@@ -1,0 +1,39 @@
+{
+  "name": "@mikecbrant/appsyncjs-test-utils",
+  "version": "0.0.0",
+  "description": "Testing utility library for Appsync JS runtime",
+  "type": "module",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikecbrant/appsyncjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mikecbrant/appsyncjs/issues"
+  },
+  "homepage": "https://github.com/mikecbrant/appsyncjs#readme",
+  "author": "Mike Brant",
+  "license": "MIT",
+  "scripts": {
+    "build": "echo 'nothing to build'",
+    "clean": "rm -rf ./node_modules",
+    "lint": "eslint --fix --ext js,cjs,mjs,ts,tsx",
+    "lint:check": "eslint --ext js,cjs,mjs,ts,tsx"
+  },
+  "devDependencies": {
+    "@aws-appsync/eslint-plugin": "^1.6.0",
+    "@aws-appsync/utils": "^1.7.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier-standard": "^4.0.1",
+    "eslint-plugin-import": "^2.29.1",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "@aws-appsync/utils": "^1.7.0"
+  }
+}
