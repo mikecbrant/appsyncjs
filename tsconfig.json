@@ -1,10 +1,10 @@
 {
-  "include": ["**/*"],
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "node",
-    "noEmit": true,
-    "target": "esnext"
-  }
+	"include": ["**/*"],
+	"exclude": ["**/node_modules", "**/*.test/*", "**/coverage", "**/dist"],
+	"compilerOptions": {
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"noEmit": true,
+		"target": "esnext"
+	}
 }

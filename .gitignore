@@ -1,1 +1,20 @@
-node_modules
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# IDE
+.idea
+.vscode
+
+# Node modules
+**/node_modules/
+
+# Test coverage
+**/coverage/
+
+# Builds
+**/dist/
+

@@ -5,7 +5,7 @@ parserOptions:
     - '**/tsconfig.json'
 extends:
   - 'plugin:@aws-appsync/recommended'
-  - prettier-standard/prettier-file
+  - prettier
 rules:
   '@typescript-eslint/no-invalid-void-type': off
   no-implicit-coercion: off
