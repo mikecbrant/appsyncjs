@@ -59,7 +59,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Install pnpm and dependencies
-        run: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v3
         with:
           version: latest
           run_install: true
