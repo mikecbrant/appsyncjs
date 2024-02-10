@@ -23,7 +23,7 @@
     "lint:check": "pnpm -r lint:check",
     "preinstall": "npx only-allow pnpm",
     "test": "pnpm build && pnpm lint && pnpm -r test",
-	"up": "pnpm update --include-workspace-root"
+    "up": "pnpm update --include-workspace-root"
   },
   "devDependencies": {
     "@aws-appsync/eslint-plugin": "^1.6.0",
