@@ -45,6 +45,7 @@ jobs:
 
   release:
     name: Release
+    needs: test
     if: needs.test.outputs.is_release == 'true' || needs.test.outputs.is_prerelease == 'true'
     runs-on: ubuntu-latest
     steps:
