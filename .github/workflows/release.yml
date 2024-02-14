@@ -47,6 +47,8 @@ jobs:
     name: Release
     needs: test
     if: needs.test.outputs.is_release == 'true' || needs.test.outputs.is_prerelease == 'true'
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo

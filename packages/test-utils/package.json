@@ -6,7 +6,7 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"files": [
-		"dist"
+		"dist/**"
 	],
 	"keywords": [
 		"appsync",
@@ -36,7 +36,7 @@
 	"license": "MIT",
 	"scripts": {
 		"build": "rm -rf ./dist && tsc",
-		"clean": "rm -rf ./node_modules",
+		"clean": "rm -rf ./coverage ./dist ./node_modules",
 		"lint": "eslint --fix --ext js,cjs,mjs,ts",
 		"lint:check": "eslint --ext js,cjs,mjs,ts",
 		"test:unit": "vitest run",
