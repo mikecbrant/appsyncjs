@@ -1,12 +1,12 @@
 {
 	"name": "@mikecbrant/appsyncjs-test-utils",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"description": "Testing utility library for Appsync JS runtime",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"files": [
-		"dist/**"
+		"dist"
 	],
 	"keywords": [
 		"appsync",

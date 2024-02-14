@@ -2,4 +2,6 @@
 
 Monorepo for npm modules for use with AWS Appsync JS resolver runtime
 
-# Pacakge
+# Packages
+
+[@mikecbrant/appsyncjs-test-utils](packages/test-utils/README.md)
