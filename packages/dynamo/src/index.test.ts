@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { test } from './index.js';
+import Dynamo, { buildProjectionExpression, getItem } from './index.js';
 
 describe('index', () => {
 	it('has expected exports', () => {
-		expect(test).toEqual('test');
+		[buildProjectionExpression, getItem].forEach((exp) => {
+			expect(exp).toBeTypeOf('function');
+			const name = exp.name;
+			expect(Dynamo[name]).toStrictEqual(exp);
+		});
 	});
 });

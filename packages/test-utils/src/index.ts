@@ -1,3 +1,3 @@
-const test = 'test';
+import utilMock from './util-mock/index.js';
 
-export { test };
+export { utilMock };

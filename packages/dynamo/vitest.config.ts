@@ -16,6 +16,7 @@ export default defineConfig({
 				lines: 100,
 				statements: 100,
 			},
+			exclude: ['src/types.ts'],
 		},
 		environment: 'node',
 		clearMocks: true,

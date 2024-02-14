@@ -7,7 +7,6 @@ extends:
   - 'plugin:@aws-appsync/recommended'
   - prettier
 rules:
-  eslint-plugin-import/extensions: always
   '@typescript-eslint/no-invalid-void-type': off
   no-implicit-coercion: off
   no-restricted-syntax:
@@ -20,6 +19,8 @@ overrides:
   - files:
       - '*.test.ts'
     rules:
+      '@aws-appsync/no-async': off
+      '@aws-appsync/no-await': off
       '@aws-appsync/no-function-passing': off
       '@aws-appsync/no-regex': off
       no-restricted-syntax: off

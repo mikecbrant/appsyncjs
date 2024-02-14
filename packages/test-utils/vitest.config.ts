@@ -18,7 +18,7 @@ export default defineConfig({
 			},
 		},
 		environment: 'node',
-		clearMocks: true,
+		// clearMocks: true,
 		root: './',
 	},
 	logLevel: 'info',

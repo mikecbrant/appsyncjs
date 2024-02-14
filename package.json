@@ -3,6 +3,15 @@
 	"version": "0.0.0",
 	"description": "Monorepo for npm modules for use with AWS Appsync JS resolver runtime",
 	"type": "module",
+	"keywords": [
+		"appsync",
+		"appsync_js",
+		"appsyncjs",
+		"aws",
+		"graphql",
+		"resolver",
+		"resolvers"
+	],
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/mikecbrant/appsyncjs.git"
@@ -26,19 +35,17 @@
 		"up": "pnpm update --include-workspace-root"
 	},
 	"devDependencies": {
-		"@aws-appsync/eslint-plugin": "^1.6.0",
-		"@aws-appsync/utils": "^1.7.0",
 		"@changesets/cli": "^2.27.1",
+		"@typescript-eslint/eslint-plugin": "^7.0.1",
 		"@typescript-eslint/parser": "^6.21.0",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-import": "^2.29.1",
+		"eslint-plugin-n": "^16.6.2",
 		"prettier": "^3.2.5",
 		"typescript": "^5.3.3"
 	},
 	"overrides": {
-		"@aws-appsync/eslint-plugin": "^1.6.0",
-		"@aws-appsync/utils": "^1.7.0",
 		"eslint": "^8.56.0",
 		"typescript": "^5.3.3",
 		"vitest": "^1.1.0"

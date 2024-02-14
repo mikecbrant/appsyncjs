@@ -1,3 +1,9 @@
-const test = 'test';
+import getItem from './get-item.js';
+import { buildProjectionExpression } from './utils.js';
 
-export { test };
+const Dynamo = {
+	buildProjectionExpression,
+	getItem,
+};
+
+export { Dynamo as default, buildProjectionExpression, getItem };

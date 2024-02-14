@@ -3,9 +3,20 @@
 	"version": "0.0.0",
 	"description": "Dynamo library for Appsync JS runtime",
 	"type": "module",
-	"main": "dist/src/index.js",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"files": [
 		"dist"
+	],
+	"keywords": [
+		"appsync",
+		"appsync_js",
+		"appsyncjs",
+		"aws",
+		"graphql",
+		"resolver",
+		"resolvers",
+		"dynamodb"
 	],
 	"publishConfig": {
 		"registry": "https://registry.npmjs.org"
@@ -25,19 +36,19 @@
 		"clean": "rm -rf ./node_modules",
 		"lint": "eslint --fix --ext js,cjs,mjs,ts",
 		"lint:check": "eslint --ext js,cjs,mjs,ts",
-		"test:esm": "node ./dist/src/index.js",
+		"test:esm": "node ./dist/index.js",
 		"test:unit": "vitest run",
 		"test": "pnpm lint && pnpm build && pnpm test:unit"
 	},
 	"devDependencies": {
 		"@aws-appsync/eslint-plugin": "^1.6.0",
 		"@aws-appsync/utils": "^1.7.0",
+		"@mikecbrant/appsyncjs-test-utils": "workspace:*",
 		"@types/node": "^20.11.17",
 		"@typescript-eslint/parser": "^6.21.0",
 		"@vitest/coverage-v8": "^1.2.2",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-import": "^2.29.1",
 		"prettier": "^3.2.5",
 		"typescript": "^5.3.3",
 		"vitest": "^1.2.2"
