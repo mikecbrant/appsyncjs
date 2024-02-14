@@ -1,0 +1,59 @@
+{
+	"name": "@mikecbrant/appsyncjs",
+	"version": "0.0.0",
+	"description": "Monorepo for npm modules for use with AWS Appsync JS resolver runtime",
+	"type": "module",
+	"keywords": [
+		"appsync",
+		"appsync_js",
+		"appsyncjs",
+		"aws",
+		"graphql",
+		"resolver",
+		"resolvers"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mikecbrant/appsyncjs.git"
+	},
+	"bugs": {
+		"url": "https://github.com/mikecbrant/appsyncjs/issues"
+	},
+	"homepage": "https://github.com/mikecbrant/appsyncjs#readme",
+	"author": "Mike Brant",
+	"license": "MIT",
+	"scripts": {
+		"build": "pnpm -r build",
+		"clean": "pnpm -r clean && rm -rf ./node_modules",
+		"fresh": "pnpm clean && pnpm i --frozen-lockfile",
+		"fmt": "prettier . --write --cache",
+		"fmt:check": "prettier . --check --debug-check",
+		"lint": "pnpm -r lint",
+		"lint:check": "pnpm -r lint:check",
+		"preinstall": "npx only-allow pnpm",
+		"test": "pnpm build && pnpm lint && pnpm -r test",
+		"up": "pnpm update --include-workspace-root"
+	},
+	"devDependencies": {
+		"@changesets/cli": "^2.27.1",
+		"@typescript-eslint/eslint-plugin": "^7.0.1",
+		"@typescript-eslint/parser": "^6.21.0",
+		"eslint": "^8.56.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-import": "^2.29.1",
+		"eslint-plugin-n": "^16.6.2",
+		"prettier": "^3.2.5",
+		"typescript": "^5.3.3"
+	},
+	"overrides": {
+		"eslint": "^8.56.0",
+		"typescript": "^5.3.3",
+		"vitest": "^1.1.0"
+	},
+	"engines": {
+		"node": "^20.11.0",
+		"npm": "none",
+		"pnpm": "^8.15.1",
+		"yarn": "none"
+	}
+}

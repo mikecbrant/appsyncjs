@@ -1,0 +1,85 @@
+name: Test and Release
+on: push
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  test:
+    name: Test
+    if: github.event.head_commit.author.name != 'GitHub Actions'
+    runs-on: ubuntu-latest
+    outputs:
+      is_prerelease: ${{ steps.determine_release.outputs.is_prerelease }}
+      is_release: ${{ steps.determine_release.outputs.is_release }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Install pnpm and dependencies
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
+          run_install: true
+      - name: Run Tests
+        run: pnpm test
+      - name: Determine release
+        id: determine_release
+        run: |
+          git status
+          pnpm changeset status --output=changeset-status.json
+          PRE_RELEASE_MODE=$( cat changeset-status.json | jq -r '.preState.mode' )
+          rm changeset-status.json
+          IS_PRERELEASE=$( [[ $PRE_RELEASE_MODE = 'pre' ]] && echo 'true' || echo 'false' )
+          echo "Is prerelease: $IS_PRERELEASE"
+          echo "is_prerelease=$IS_PRERELEASE" >> $GITHUB_OUTPUT
+          IS_RELEASE=$( [[ $GITHUB_REF_NAME = 'main' ]] && echo 'true' || echo 'false' )
+          echo "Is release: $IS_RELEASE"
+          echo "is_release=$IS_RELEASE" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+
+  release:
+    name: Release
+    if: needs.test.outputs.is_release == 'true' || needs.test.outputs.is_prerelease == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          registry-url: https://registry.npmjs.org
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Install pnpm and dependencies
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
+          run_install: true
+      - name: Publish Package
+        run: |
+          if [[ $IS_RELEASE = "true" && $IS_PRERELEASE = "true" ]]
+          then
+              echo "exiting prerelease mode on main branch"
+              pnpm changeset pre exit
+              IS_PRERELEASE=false
+          fi
+          pnpm changeset status
+          pnpm changeset version
+          pnpm changeset publish
+          git add .
+          PACKAGE_VERSION=$(sed -nE 's/^\s*"version": "(.*?)",$/\1/p' ./package.json)
+          git commit -m "$PACKAGE_VERSION" --no-verify
+          git push --follow-tags --no-verify || echo "unable to push git tag--perhaps its already set?"
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+          IS_PRERELEASE: ${{ needs.test.outputs.is_prerelease }}
+          IS_RELEASE: ${{ needs.test.outputs.is_release }}

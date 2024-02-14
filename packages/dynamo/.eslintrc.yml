@@ -1,0 +1,26 @@
+parser: '@typescript-eslint/parser'
+parserOptions:
+  ecmaVersion: 2018
+  project:
+    - '**/tsconfig.json'
+extends:
+  - 'plugin:@aws-appsync/recommended'
+  - prettier
+rules:
+  '@typescript-eslint/no-invalid-void-type': off
+  no-implicit-coercion: off
+  no-restricted-syntax:
+    - error
+    - selector: "Identifier[name='Boolean']"
+      message: "AppSync runtime does not support Boolean. Consider using '!!' instead."
+    - selector: Identifier[name='Date']
+      message: AppSync runtime does not support Date. Use util.time instead.
+overrides:
+  - files:
+      - '*.test.ts'
+    rules:
+      '@aws-appsync/no-async': off
+      '@aws-appsync/no-await': off
+      '@aws-appsync/no-function-passing': off
+      '@aws-appsync/no-regex': off
+      no-restricted-syntax: off
