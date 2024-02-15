@@ -43,7 +43,7 @@
 	"devDependencies": {
 		"@aws-appsync/eslint-plugin": "^1.6.0",
 		"@aws-appsync/utils": "^1.7.0",
-		"@mikecbrant/appsyncjs-test-utils": "workspace:*",
+		"@mikecbrant/appsyncjs-test-utils": "^1.0.1",
 		"@types/node": "^20.11.17",
 		"@typescript-eslint/parser": "^6.21.0",
 		"@vitest/coverage-v8": "^1.2.2",

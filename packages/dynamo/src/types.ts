@@ -1,3 +1,7 @@
+type DynamoAttribute = DynamoPrimative | DynamoList | DynamoRecord;
+
+type DynamoList = DynamoAttribute[];
+
 type DynamoKey = Record<string, DynamoKeyField>;
 
 // DynamoDB primary and secondary index keys must be
@@ -5,4 +9,17 @@ type DynamoKey = Record<string, DynamoKeyField>;
 // we treat base64 as string for typing
 type DynamoKeyField = string | number;
 
-export { DynamoKey, DynamoKeyField };
+type DynamoPrimative = string | number | boolean | null;
+
+type DynamoRecord = {
+	[key in string]: DynamoAttribute;
+};
+
+export {
+	DynamoAttribute,
+	DynamoList,
+	DynamoKey,
+	DynamoKeyField,
+	DynamoPrimative,
+	DynamoRecord,
+};
