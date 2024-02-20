@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { appendError, error } from './errors.ts';
+import { appendError, error } from './errors.js';
 
 describe('errors', () => {
 	describe('appendError', () => {

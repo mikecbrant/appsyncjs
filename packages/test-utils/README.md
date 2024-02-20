@@ -67,7 +67,7 @@ import { request } from './path/to/resolver.js';
 
 vi.mock('@aws-appsync/utils', async () => {
 	const original = await vi.importActual('@aws-appsync/utils');
-	// we must import utilMock
+	// must import utilMock dynamically due to vitest hoisting
 	const { utilMock } = await import('@mikecbrant/appsyncjs-test-utils');
 	return {
 		...original,
@@ -82,7 +82,7 @@ describe('request', () => {
 
 	// ...instead, we set it here after @aws-appsync/utils
 	// module has been mocked
-	beforeEach(async () => {
+	beforeAll(async () => {
 		const mock = await import('@aws-appsync/utils');
 		utilMock = mock.util;
 	});
@@ -102,9 +102,27 @@ describe('request', () => {
 
 Currently the following utilities have been implemented in `utilMock`:
 
+- `base64Decode`, `base64Encode`, `urlDecorde`, `urlEncode` [Encoding utils](https://docs.aws.amazon.com/appsync/latest/devguide/built-in-util-js.html#utility-helpers-in-encoding)
 - `autoId`, `autoUlid`, `autoKsuid` [ID generation utils](https://docs.aws.amazon.com/appsync/latest/devguide/built-in-util-js.html#utility-helpers-in-id-gen-js)
 - `util.error`, `util.appendError` [Error utils](https://docs.aws.amazon.com/appsync/latest/devguide/built-in-util-js.html#utility-helpers-in-error-js)
   - note that these mocks simply log to `console.error` and do not provide any of the AppSync / GraphQL related behaviors related to resolver evaluation or response decoration
-  - it is recommended that `return util.error(...)` be used in code if you need testable ability to exit request/response handler exeuction
+  - it is recommended that `return util.error(...)` be used in code if you need testable ability to exit request/response handler execution
+- `authType` from [Type and pattern matching utils](https://docs.aws.amazon.com/appsync/latest/devguide/built-in-util-js.html#utility-helpers-in-patterns-js)
+  - note `authType` returns `User Pool Authorization` value by default
+  - a different `authType` return value of can be set by overriding the mock implementation on a test or suite-specific basis as shown in the example below
+
+```js
+// change implementation for all tests in suite
+beforeEach(() => {
+	util.authType.mockImplementation(() => 'API Key Authorization');
+});
+```
+
+- `unauthorized` from [Authorization utils](https://docs.aws.amazon.com/appsync/latest/devguide/built-in-util-js.html#utility-helpers-in-resolver-auth-js)
+  - note that this mock simply logs to `console.error` and does not throw and exit function or provide any of the AppSync / GraphQL related behaviors related to resolver evaluation or response decoration
+  - it is recommended that `return util.unauthorized()` be used in code if you need testable ability to exit request/response handler execution
 - all [DynamoDB helpers in util.dynamodb](https://docs.aws.amazon.com/appsync/latest/devguide/dynamodb-helpers-in-util-dynamodb-js.html)
+- all [Runtime utilities](https://docs.aws.amazon.com/appsync/latest/devguide/runtime-utils-js.html)
+  - note `earlyReturn` simply logs to `console.info` and return input argument, but does not not exit function or provide any of the AppSync / GraphQL related behaviors related to resolver evaluation or response decoration
+  - it is recommended that `return util.runtime.earlyReturn(...)` be used in code if you need testable ability to exit request/response handler execution
 - `util.time.nowISO8601` from [Time helpers](https://docs.aws.amazon.com/appsync/latest/devguide/time-helpers-in-util-time-js.html)
