@@ -1,6 +1,6 @@
 # @mikecbrant/appsyncjs-test-utils
 
-This is package is inteded to provide utilities suitable conducting both unit and functional testing for AWS AppSync resolvers written in the `APPSYNC_JS` runtime environment.
+This is package is intended to provide utilities suitable for conducting both unit and functional testing for AWS AppSync resolvers written in the `APPSYNC_JS` runtime environment.
 
 The `APPSYNC_JS` runtime environment offers a Javascript-like set of features geared at making it easier for developers to write performant resovlers without the need to learn the legacy VTL mapping templates syntax which was formerly the primary means for implementing AppSync resolver logic.
 
