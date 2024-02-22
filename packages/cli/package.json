@@ -1,6 +1,6 @@
 {
 	"name": "@mikecbrant/appsyncjs-cli",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"description": "CLI utilities for use in `APPSYNC_JS` runtime development",
 	"type": "module",
 	"main": "index.mjs",
