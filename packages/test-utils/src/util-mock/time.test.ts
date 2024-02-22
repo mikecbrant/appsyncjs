@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import time from './time.ts';
+import time from './time.js';
 
 const { nowISO8601 } = time;
 

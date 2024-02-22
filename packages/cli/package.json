@@ -7,7 +7,9 @@
 	"files": [
 		"cli.mjs",
 		"index.mjs",
-		"commands/*.mjs"
+		"commands/*.mjs",
+		"!test-files",
+		"!**/*.test.mjs"
 	],
 	"bin": {
 		"appsyncjs": "./cli.mjs"

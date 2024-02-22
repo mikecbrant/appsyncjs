@@ -123,6 +123,9 @@ importers:
       '@aws-appsync/utils':
         specifier: ^1.7.0
         version: 1.7.0
+      '@mikecbrant/appsyncjs-cli':
+        specifier: ^1.0.0
+        version: link:../cli
       '@types/node':
         specifier: ^20.11.17
         version: 20.11.19

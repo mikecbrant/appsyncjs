@@ -1,5 +1,9 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vitest/config';
+import {
+	coverageConfigDefaults,
+	defineConfig,
+	defaultExclude,
+} from 'vitest/config';
 
 export default defineConfig({
 	test: {
@@ -18,7 +22,7 @@ export default defineConfig({
 			},
 		},
 		environment: 'node',
-		// clearMocks: true,
+		clearMocks: true,
 		root: './',
 	},
 	logLevel: 'info',

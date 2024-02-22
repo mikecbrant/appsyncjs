@@ -8,5 +8,5 @@
 		"declaration": true
 	},
 	"include": ["src"],
-	"exclude": ["**/*.test.*"]
+	"exclude": ["**/*.test.*", "test-files"]
 }
