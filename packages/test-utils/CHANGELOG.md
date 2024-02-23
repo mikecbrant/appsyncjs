@@ -1,5 +1,11 @@
 # @mikecbrant/appsyncjs-test-utils
 
+## 1.2.0
+
+### Minor Changes
+
+- 3593888: Functional test utilities
+
 ## 1.1.0
 
 ### Minor Changes
