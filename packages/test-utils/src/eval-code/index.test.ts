@@ -4,17 +4,17 @@ import {
 	EvaluateCodeError,
 	evaluateFile,
 	getThrottledClient,
-	utilMock,
 } from './index.js';
-import * as evalCodeModule from './eval-code/index.js';
-import utilMockModule from './util-mock/index.js';
+import * as evalCodeModule from './evaluate-code.js';
+import * as throttledClientModule from './throttled-appsync-client.js';
 
-describe('index', () => {
+describe('eval-code', () => {
 	it('has expected exports', () => {
 		expect(evaluateCode).toStrictEqual(evalCodeModule.evaluateCode);
 		expect(EvaluateCodeError).toStrictEqual(evalCodeModule.EvaluateCodeError);
 		expect(evaluateFile).toStrictEqual(evalCodeModule.evaluateFile);
-		expect(getThrottledClient).toStrictEqual(evalCodeModule.getThrottledClient);
-		expect(utilMock).toStrictEqual(utilMockModule);
+		expect(getThrottledClient).toStrictEqual(
+			throttledClientModule.getThrottledClient,
+		);
 	});
 });
