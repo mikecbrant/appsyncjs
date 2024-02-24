@@ -1,5 +1,11 @@
 # @mikecbrant/appsyncjs-test-utils
 
+## 1.2.1
+
+### Patch Changes
+
+- c837e07: releaseable README change
+
 ## 1.2.0
 
 ### Minor Changes
