@@ -154,9 +154,9 @@ Some key considerations when testing with `EvaluateCode` API:
 - You will quickly run up against API rate limits as you grow your test coverage
   - throttling test executions is important to scaling your test coverage
   - this library extends the underlying aws-sdk `AppSyncClient` class to provide reasonable means for throttling and retrying throttled requests in the context of parallel test execution
-  - you will still need to set and manage throttle config and test timeouts relevant to your test setup as it changes over time since it will always take X amount of time to execute Y `EvaluateCode` calls. You should expect to run ~300 tests per minute with default throttle settings.
+  - you will still need to set and manage throttle config and test timeouts relevant to your test setup. You should expect to run ~300 tests per minute with default throttle settings.
 - There are three categories of errors that need to be disambiguated from the `EvaluateCodeCommand` `error` response shape.
-  - message-only errors which would typically be added by `util.error` and `util.appendError` calls. These are errors which are potentially surfaced in GraphQL responses and should be considered "normal" part of the response.
+  - message-only errors which are typically added by `util.error` and `util.appendError` calls. These are errors which are potentially surfaced in GraphQL responses and should be considered "normal" part of the response.
   - "compile"-time code errors generated during `EvaluateCode`. These represent some problem with your code and should be treated like an error in your code under test.
   - run-time message-only errors. These must be disambiguated from `util.*Error` messages by RegExp pattern. These are also errors with your code and should be treated as an error in your code under test.
   - the `evaluateCode` and `evaluateFile` methods exposed by this library throw `EvaluateCodeError` (a subclass of `AggregateError`) errors for last two cases. This let's you easily test code which interacts with `util.*Error` methods in normal `evaluate*` results, while letting your tests fail loudly with uncaught `EvaluateCodeError` when there is something wrong with your code. Each error contains pertinent details and contextual log entries on it's `errors` property.
