@@ -2,6 +2,8 @@
 
 This is package is intended to provide utilities suitable for conducting both unit and functional testing for AWS AppSync resolvers written in the `APPSYNC_JS` runtime environment.
 
+## What is APPSYNC_JS ?
+
 The `APPSYNC_JS` runtime environment offers a Javascript-like set of features geared at making it easier for developers to write performant resovlers without the need to learn the legacy VTL mapping templates syntax which was formerly the primary means for implementing AppSync resolver logic.
 
 Related reading:
@@ -18,7 +20,7 @@ This library is intended to work along with `@aws-appsync/utils` which should be
 
 ## Install
 
-For best install of this framework and full set peer dependencies use.
+For best install of this framework and full set peer dependencies use...
 
 ```bash
 pnpm i -D @mikecbrant/appsyncjs-cli @mikecbrant/appsyncjs-test-utils @aws-appsync/eslint-plugin @aws-appsync/utils @aws-sdk/client-appsync vitest
@@ -27,9 +29,9 @@ pnpm i -D @mikecbrant/appsyncjs-cli @mikecbrant/appsyncjs-test-utils @aws-appsyn
 npm i -D @mikecbrant/appsyncjs-cli @mikecbrant/appsyncjs-test-utils @aws-appsync/eslint-plugin @aws-appsync/utils @aws-sdk/client-appsync vitest
 ```
 
-- `@aws-appsync/eslint-plugin` is not needed by these libraries, but is recommended for use in linting your files for `APPSYNC_JS`
 - `@aws-sdk/client-appsync` is peer dependency needed for `evaluateFile` / `evaluateCode` functional testing utils
 - `vitest` is peer dependency needed for `utilMock` unit testing utility
+- `@aws-appsync/eslint-plugin` is not needed by these libraries, but is recommended for use in linting your files for `APPSYNC_JS`
 
 ## Unit testing resolvers
 
@@ -39,6 +41,7 @@ Take the following [example from the AWS docs ](https://docs.aws.amazon.com/apps
 
 ```js
 import { util } from '@aws-appsync/utils';
+
 export function request(ctx) {
 	const { id } = ctx.args;
 	return {
@@ -187,7 +190,7 @@ import {
 } from '@mikecbrant/appsyncjs-test-utils';
 ```
 
-- `evaluateFile` is probably the most useful of the exports as typically test cases would be set up to work with built distribution file holding `request` and `response` function for a single top-level or step resolver. This function takes responsibility for reading file into string for usage on API.
+- `evaluateFile` is probably the most useful of the exports as typically test cases would be set up to work with built distribution files holding `request` and `response` functions for a single top-level or step resolver. This function takes responsibility for reading file into string for usage on API.
 
 ```js
 const { error, evaluationResult, logs } = await evaluateFile({
@@ -199,13 +202,11 @@ const { error, evaluationResult, logs } = await evaluateFile({
 
 - `evaluateCode` is used to pass code as string when needed. `evaluateFile` uses this under the hood after extracting file contents.
 - `EvaluateCodeError` is subclass of `AggregateError` with no other additional functionality, just differnent name for distinction.
-- `getThrottledClient` allows you to manually set up your `ThrottledAppsyncClient` instance with non-default configuations for `maxRetries`, `opsPerSecond` throttle setting or any ther underlying `AppSyncClient` options, such as `region`.
+- `getThrottledClient` allows you to manually set up your `ThrottledAppsyncClient` instance with non-default configuations for `maxRetries`, `opsPerSecond` throttle setting or any other underlying `AppSyncClient` options, such as `region`.
 
 #### Vitest example
 
-There are two global test configuration settings which relate to our API request throttling.
-
-You will likely need to adjust these settings as you build out test coverage.
+There are two global test configuration settings which relate to our API request throttling. You will likely need to adjust these settings as you build out test coverage.
 
 ```js
 {
@@ -298,6 +299,7 @@ Vitest example:
 ```js
 describe('my test suite', async () => {
 	beforeAll(() => {
+		// initialize client singleton
 		getThrottledClient({
 			maxRetries: 2,
 			opsPerSecond: 10,
