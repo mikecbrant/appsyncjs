@@ -149,28 +149,29 @@ beforeEach(() => {
 
 The primary means for conducting functional testing of resolvers is via `EvaluateCode` API AppSync service call, typically using [EvaluateCodeCommand in aws-sdk](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/appsync/command/EvaluateCodeCommand/). This library provides tooling to simplify working around some of the rough edges of this service, especially for use in automated testing.
 
-Some key considertions when testing with `EvaluateCode` API:
+Some key considerations when testing with `EvaluateCode` API:
 
 - You will quickly run up against API rate limits as you grow your test coverage
   - throttling test executions is important to scaling your test coverage
-  - this library extends the underlying aws-sdk client to provide reasonable means for throttling and retrying throttled requests in the context of parallel test execution
+  - this library extends the underlying aws-sdk `AppSyncClient` class to provide reasonable means for throttling and retrying throttled requests in the context of parallel test execution
+  - you will still need to set and manage throttle config and test timeouts relevant to your test setup as it changes over time since it will always take X amount of time to execute Y `EvaluateCode` calls. You should expect to run ~300 tests per minute with default throttle settings.
 - There are three categories of errors that need to be disambiguated from the `EvaluateCodeCommand` `error` response shape.
   - message-only errors which would typically be added by `util.error` and `util.appendError` calls. These are errors which are potentially surfaced in GraphQL responses and should be considered "normal" part of the response.
   - "compile"-time code errors generated during `EvaluateCode`. These represent some problem with your code and should be treated like an error in your code under test.
   - run-time message-only errors. These must be disambiguated from `util.*Error` messages by RegExp pattern. These are also errors with your code and should be treated as an error in your code under test.
-  - the `evaluateCode` and `evaluateFile` methods exposed by this library throw `EvaluateCodeError` (a library extension of `AggregateError`) errors for last two cases. This let's you easily test code which interacts with `util.*Error` methods in normal `evaluateCode` results, while letting your tests fail loudly with uncaught `EvaluateCodeError`. Each error contains pertinent details and contextual log entries on it's `errors` property.
-- When using Typescript, the `EvaluateCodeCommand` type is difficult to work with as pretty much all properties at all levels are optional due to loosely structured shape in combination with JSON string values.
-  - this library provides stronger guaranteeto in both it's input and response shapes, along with managing with JSON serialization concerns with underlying API, leaving test code to work only with the shapes it expects at these boundaries.
-- For most meaningful tests, you should pass in meaningful [AppSync context objects](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-context-reference-js.html) to exercise available code paths.
-  - currently `info` property can not be passed in context object, as it is not suppoted by `EvaluateCode` API.
-- If writing your resolvers in Typescript, you need to build distributable code before testing it
-  - [@mikecbrant/appsyncjs-cli](https://www.npmjs.com/package/@mikecbrant/appsyncjs-cli) library offers CLI build tool for use in npm run scipts to ease this process.
+  - the `evaluateCode` and `evaluateFile` methods exposed by this library throw `EvaluateCodeError` (a subclass of `AggregateError`) errors for last two cases. This let's you easily test code which interacts with `util.*Error` methods in normal `evaluate*` results, while letting your tests fail loudly with uncaught `EvaluateCodeError` when there is something wrong with your code. Each error contains pertinent details and contextual log entries on it's `errors` property.
+- When using Typescript, the `EvaluateCodeCommandOutput` type is difficult to work with as pretty much all properties at all levels are optional due to loosely structured shape in combination with JSON string values.
+  - this library provides stronger guarantees on both it's input and response shapes, along with managing with JSON serialization concerns with underlying API, leaving test code to work only with the shapes it expects at these boundaries.
+- For most meaningful tests, you should pass in meaningful [AppSync context objects](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-context-reference-js.html) to exercise various code paths based on passed `args`, `stash`, etc.
+  - currently `info` property can not be passed in context object, as it is not supported by `EvaluateCode` API :~(
+- If writing your resolvers in Typescript, you need to build `APPSYNC_JS`-compliant code before testing it.
+  - [@mikecbrant/appsyncjs-cli](https://www.npmjs.com/package/@mikecbrant/appsyncjs-cli) library offers CLI build tool for use in npm run scripts to eliminate need for local `esbuild` configurations.
 
 ### Usage
 
 #### package.json
 
-Typical run script config for an application using these tool might include the following:
+Typical run script config for an application using these tools might include the following:
 
 ```js
 	scripts: {
