@@ -1,5 +1,11 @@
 # @mikecbrant/appsyncjs-test-utils
 
+## 1.2.3
+
+### Patch Changes
+
+- d875598: releaseable README change
+
 ## 1.2.2
 
 ### Patch Changes
