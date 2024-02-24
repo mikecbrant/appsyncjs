@@ -187,8 +187,17 @@ import {
 } from '@mikecbrant/appsyncjs-test-utils';
 ```
 
-- `evaluateFile` is probably the most useful of the exports as typically test cases would be set up to work with built distribution file holding `request` and `response` function for a single top-level or step resolver.
-- `evaluateCode` is used to pass code to test as string when needed. `evaluateFile` uses this under the hood after extracting file contents.
+- `evaluateFile` is probably the most useful of the exports as typically test cases would be set up to work with built distribution file holding `request` and `response` function for a single top-level or step resolver. This function takes responsibility for reading file into string for usage on API.
+
+```js
+const { error, evaluationResult, logs } = await evaluateFile({
+	file: '/path/to/built/file.js',
+	context: { args: {}, stash: {}, /* ...other props */ }, // Appsync context object
+	function: 'request', // or 'response' depending on function to test
+});
+```
+
+- `evaluateCode` is used to pass code as string when needed. `evaluateFile` uses this under the hood after extracting file contents.
 - `EvaluateCodeError` is subclass of `AggregateError` with no other additional functionality, just differnent name for distinction.
 - `getThrottledClient` allows you to manually set up your `ThrottledAppsyncClient` instance with non-default configuations for `maxRetries`, `opsPerSecond` throttle setting or any ther underlying `AppSyncClient` options, such as `region`.
 
@@ -228,14 +237,15 @@ import { glob } from 'glob';
 import { readFile } from 'node:fs/promises';
 import { evaluateCode, evaluateFile } from '@mikecbrant/appsyncjs-test-utils';
 
-describe('my test suite', async () => {
-	it('passes basic syntax check with some base context', async () => {
+describe('my test suite', () => {
+	it('passes basic check with no args or stash in context', async () => {
 		const files = glob('/path/to/built/files/**/*.js');
-		const context = { args: { foo: 'bar' } };
+		const context = { args: {}, stash: {} };
 
 		const promises = [];
 
 		files.forEach((file) => {
+			// check both request and response
 			promises.push(
 				evaluateFile({
 					file,
@@ -252,14 +262,17 @@ describe('my test suite', async () => {
 
 		const results = await Promise.allSettled(promises);
 
-		// we expect no rejections
+		// we expect no rejections due to EvaluateCodeError
 		results.forEach((result) => {
 			expect(result.status).toEqual('fulfilled');
+			// response detail available as...
+			// const { error, evaluationResult, logs } = result.value;
 		});
 	});
 
-	it('works with code read from file', async () => {
-		const code = await readFile('path/to/built/file.js');
+	// example using lower-level evaluateCode
+	it('request works with code read from file', async () => {
+		const code = await readFile('/path/to/built/file.js');
 		const context = { args: { foo: 'bar' } };
 		const expected = { bat: 'baz' };
 
