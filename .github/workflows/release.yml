@@ -47,7 +47,7 @@ jobs:
       - name: Install pnpm and dependencies
         uses: pnpm/action-setup@v4
         with:
-          version: 8.15.1
+          version: 10.15.0
           run_install: true
       - name: Determine release
         id: determine_release
@@ -91,7 +91,7 @@ jobs:
       - name: Install pnpm and dependencies
         uses: pnpm/action-setup@v4
         with:
-          version: 8.15.1
+          version: 10.15.0
           run_install: true
       - name: Build
         run: pnpm build
