@@ -20,11 +20,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install pnpm and dependencies
         uses: pnpm/action-setup@v4
         with:
-          # Pin to PNPM 8 to match the repository lockfile (lockfileVersion: 6)
-          version: 8.15.4
+          version: latest
           run_install: true
       - name: Run Tests
         run: pnpm test
@@ -64,14 +65,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
           registry-url: https://registry.npmjs.org
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Install pnpm and dependencies
         uses: pnpm/action-setup@v4
         with:
-          # Pin to PNPM 8 to match the repository lockfile (lockfileVersion: 6)
-          version: 8.15.4
+          version: latest
           run_install: true
       - name: Build
         run: pnpm build
