@@ -5,6 +5,7 @@ Helpers for authoring AWS AppSync JavaScript (APPSYNC_JS) resolvers that target 
 This package currently exposes:
 
 - `getItem(props)` — builds a valid `DynamoDBGetItemRequest` object.
+- `putItem(props)` — builds a valid `DynamoDBPutItemRequest` object.
 - `buildProjectionExpression(fields)` — builds a DynamoDB projection expression `{ expression, expressionNames }` from a string array.
 
 Peer dependency: `@aws-appsync/utils` (the request objects use the AppSync `util.dynamodb` helpers under the hood).
@@ -88,5 +89,82 @@ export function response(ctx) {
 	return ctx.result?.items ?? [];
 }
 ```
+
+4) Basic PutItem
+
+```ts
+// resolvers/createUser.ts
+import { putItem } from '@mikecbrant/appsyncjs-dynamo';
+import { util } from '@aws-appsync/utils';
+
+export function request(ctx) {
+	const user = {
+		pk: `USER#${ctx.args.id}`,
+		name: ctx.args.name,
+		email: ctx.args.email,
+	};
+
+	return putItem({
+		key: { pk: user.pk },
+		item: user,
+	});
+}
+
+export function response(ctx) {
+	if (ctx.error) {
+		util.error(ctx.error.message, ctx.error.type);
+	}
+	// Note: PutItem only returns attributes when your resolver is configured
+	// to return them; otherwise ctx.result is typically empty
+	return ctx.result;
+}
+```
+
+5) Conditional write with `condition`
+
+```ts
+// resolvers/createUserIfMissing.ts
+import { putItem } from '@mikecbrant/appsyncjs-dynamo';
+import { util } from '@aws-appsync/utils';
+
+export function request(ctx) {
+	const pk = `USER#${ctx.args.id}`;
+	return putItem({
+		key: { pk },
+		item: { pk, name: ctx.args.name },
+		// Only create when the item does not already exist
+		condition: {
+			expression: 'attribute_not_exists(#pk)',
+			expressionNames: { '#pk': 'pk' },
+		},
+	});
+}
+
+export function response(ctx) {
+	if (ctx.error) {
+		util.error(ctx.error.message, ctx.error.type);
+	}
+	return ctx.result;
+}
+```
+
+
+## API: `putItem(props)`
+
+Builds and returns a `DynamoDBPutItemRequest` suitable for AppSync DynamoDB resolvers. Import it as a named export:
+
+```ts
+import { putItem } from '@mikecbrant/appsyncjs-dynamo';
+```
+
+Parameters (`PutItemProps`):
+
+- `key: DynamoKey` — the primary key for the item. A map of attribute name to a string or number value, e.g. `{ pk: 'USER#123' }`.
+- `item: Record<string, unknown>` — the full item attributes to write. Values are marshaled with `util.dynamodb.toMapValues`.
+- `condition?: ConditionCheckExpression` — optional conditional expression to enforce on write (for example, `attribute_not_exists(#pk)`).
+
+Notes
+- `condition` is omitted from the request when not provided.
+- Under the hood, both `key` and `item` are converted with `util.dynamodb.toMapValues` from `@aws-appsync/utils`.
 
 
