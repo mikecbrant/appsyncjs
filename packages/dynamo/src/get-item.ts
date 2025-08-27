@@ -2,7 +2,7 @@ import { type DynamoDBGetItemRequest, util } from '@aws-appsync/utils';
 import type { DynamoKey } from './types.js';
 import { buildProjectionExpression } from './utils.js';
 
-type GetItemProps = {
+export type GetItemProps = {
 	key: DynamoKey;
 	consistentRead?: boolean;
 	returnedFields?: string[];
