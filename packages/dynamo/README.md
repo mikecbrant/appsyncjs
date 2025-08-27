@@ -90,7 +90,6 @@ export function response(ctx) {
 }
 ```
 
-
 4) Basic PutItem
 
 ```ts
