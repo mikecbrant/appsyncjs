@@ -1,5 +1,13 @@
 # @mikecbrant/appsyncjs-test-utils
 
+## 1.2.4
+
+### Patch Changes
+
+- 0cb8c75: chore(deps): update dependency/devDependency specifiers to latest non‑major ranges. No runtime code changes.
+- Updated dependencies [0cb8c75]
+  - @mikecbrant/appsyncjs-cli@1.0.2
+
 ## 1.2.3
 
 ### Patch Changes

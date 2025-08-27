@@ -1,5 +1,11 @@
 # @mikecbrant/appsyncjs-cli
 
+## 1.0.2
+
+### Patch Changes
+
+- 0cb8c75: chore(deps): update dependency/devDependency specifiers to latest non‑major ranges. No runtime code changes.
+
 ## 1.0.1
 
 ### Patch Changes
