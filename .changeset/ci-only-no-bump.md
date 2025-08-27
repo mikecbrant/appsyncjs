@@ -1,5 +1,4 @@
 ---
-'@mikecbrant/appsyncjs': none
 '@mikecbrant/appsyncjs-cli': none
 '@mikecbrant/appsyncjs-dynamo': none
 '@mikecbrant/appsyncjs-test-utils': none
