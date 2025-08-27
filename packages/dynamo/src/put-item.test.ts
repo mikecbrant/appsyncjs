@@ -32,7 +32,7 @@ describe('putItem', () => {
 		});
 	});
 
-	it('supports condition and optional flags', () => {
+	it('supports optional condition', () => {
 		const key = { id: '123' };
 		const item = { id: '123', name: 'Bob' };
 		const condition = {
@@ -45,32 +45,14 @@ describe('putItem', () => {
 			conditionalCheckFailedHandler: { strategy: 'Reject' },
 		};
 
-		const request = putItem({
-			key,
-			item,
-			condition,
-			customPartitionKey: 'TENANT#1',
-			populateIndexFields: true,
-			_version: 3,
-		});
+		const request = putItem({ key, item, condition });
 
 		expect(request).toEqual({
 			operation: 'PutItem',
 			key: { id: { S: '123' } },
 			attributeValues: { id: { S: '123' }, name: { S: 'Bob' } },
 			condition,
-			customPartitionKey: 'TENANT#1',
-			populateIndexFields: true,
-			_version: 3,
 		});
-	});
-
-	it('passes through populateIndexFields=false when provided', () => {
-		const key = { id: '999' };
-		const item = { id: '999', name: 'Carol' };
-		const request = putItem({ key, item, populateIndexFields: false });
-
-		expect(request.populateIndexFields).toBe(false);
 	});
 
 	it('propagates errors from util when mapping values', () => {

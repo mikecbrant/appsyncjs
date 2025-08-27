@@ -148,26 +148,6 @@ export function response(ctx) {
 }
 ```
 
-6) Options: `customPartitionKey`, `populateIndexFields`, `_version`
-
-```ts
-// resolvers/createUserWithOptions.ts
-import { putItem } from '@mikecbrant/appsyncjs-dynamo';
-
-export function request(ctx) {
-	const pk = `USER#${ctx.identity.sub}`;
-	return putItem({
-		key: { pk },
-		item: { pk, name: ctx.args.name, email: ctx.args.email },
-		// Multi-tenant tables: route writes under a tenant-specific logical partition
-		customPartitionKey: `TENANT#${ctx.identity.claims['tenantId']}`,
-		// Control whether GSIs should be auto-populated by the service
-		populateIndexFields: true,
-		// Optional optimistic concurrency version
-		_version: 1,
-	});
-}
-```
 
 ## API: `putItem(props)`
 
@@ -182,12 +162,9 @@ Parameters (`PutItemProps`):
 - `key: DynamoKey` — the primary key for the item. A map of attribute name to a string or number value, e.g. `{ pk: 'USER#123' }`.
 - `item: Record<string, unknown>` — the full item attributes to write. Values are marshaled with `util.dynamodb.toMapValues`.
 - `condition?: ConditionCheckExpression` — optional conditional expression to enforce on write (for example, `attribute_not_exists(#pk)`).
-- `customPartitionKey?: string` — optional logical tenant/custom partition identifier used by the AppSync resolver/service; this does not alter DynamoDB’s physical partitioning.
-- `populateIndexFields?: boolean` — when set, signals the AppSync resolver/service to auto-populate index fields (when supported by your API configuration). This is not a native DynamoDB feature.
-- `_version?: number` — optional version number for optimistic concurrency use cases.
 
 Notes
-- All optional properties are omitted from the request unless provided.
+- `condition` is omitted from the request when not provided.
 - Under the hood, both `key` and `item` are converted with `util.dynamodb.toMapValues` from `@aws-appsync/utils`.
 
 

@@ -9,20 +9,10 @@ export type PutItemProps = {
 	key: DynamoKey;
 	item: Record<string, unknown>;
 	condition?: ConditionCheckExpression;
-	customPartitionKey?: string;
-	populateIndexFields?: boolean;
-	_version?: number;
 };
 
 const putItem = (props: PutItemProps): DynamoDBPutItemRequest => {
-	const {
-		key,
-		item,
-		condition,
-		customPartitionKey,
-		populateIndexFields,
-		_version,
-	} = props;
+	const { key, item, condition } = props;
 
 	const request: DynamoDBPutItemRequest = {
 		operation: 'PutItem',
@@ -31,10 +21,6 @@ const putItem = (props: PutItemProps): DynamoDBPutItemRequest => {
 	};
 
 	if (condition) request.condition = condition;
-	if (customPartitionKey) request.customPartitionKey = customPartitionKey;
-	if (typeof populateIndexFields === 'boolean')
-		request.populateIndexFields = populateIndexFields;
-	if (typeof _version === 'number') request._version = _version;
 
 	return request;
 };
