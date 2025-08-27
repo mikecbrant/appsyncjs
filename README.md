@@ -27,4 +27,3 @@ npm i -D @mikecbrant/appsyncjs-cli @mikecbrant/appsyncjs-test-utils @mikecbrant/
 - `@aws-sdk/client-appsync` is peer dependency needed for `evaluateFile` / `evaluateCode` functional testing utils
 - `vitest` is peer dependency needed for `utilMock` unit testing utility
 
-
