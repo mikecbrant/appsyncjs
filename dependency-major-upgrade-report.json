@@ -1,0 +1,275 @@
+{
+  "generatedAt": "2025-08-27T17:51:25.292Z",
+  "items": [
+    {
+      "file": "/home/user/appsyncjs/package.json",
+      "section": "devDependencies",
+      "package": "@typescript-eslint/eslint-plugin",
+      "declared": "^7.0.2",
+      "currentMajor": 7,
+      "latestInMajor": "7.18.0",
+      "latestOverall": "8.41.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/package.json",
+      "section": "devDependencies",
+      "package": "@typescript-eslint/parser",
+      "declared": "^6.21.0",
+      "currentMajor": 6,
+      "latestInMajor": "6.21.0",
+      "latestOverall": "8.41.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/package.json",
+      "section": "devDependencies",
+      "package": "eslint",
+      "declared": "^8.57.0",
+      "currentMajor": 8,
+      "latestInMajor": "8.57.1",
+      "latestOverall": "9.34.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/package.json",
+      "section": "devDependencies",
+      "package": "eslint-config-prettier",
+      "declared": "^9.1.0",
+      "currentMajor": 9,
+      "latestInMajor": "9.1.2",
+      "latestOverall": "10.1.8"
+    },
+    {
+      "file": "/home/user/appsyncjs/package.json",
+      "section": "devDependencies",
+      "package": "eslint-plugin-n",
+      "declared": "^16.6.2",
+      "currentMajor": 16,
+      "latestInMajor": "16.6.2",
+      "latestOverall": "17.21.3"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/cli/package.json",
+      "section": "dependencies",
+      "package": "commander",
+      "declared": "^12.0.0",
+      "currentMajor": 12,
+      "latestInMajor": "12.1.0",
+      "latestOverall": "14.0.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/cli/package.json",
+      "section": "dependencies",
+      "package": "glob",
+      "declared": "^10.3.10",
+      "currentMajor": 10,
+      "latestInMajor": "10.4.5",
+      "latestOverall": "11.0.3"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/cli/package.json",
+      "section": "devDependencies",
+      "package": "@aws-appsync/utils",
+      "declared": "^1.7.0",
+      "currentMajor": 1,
+      "latestInMajor": "1.12.0",
+      "latestOverall": "2.0.3"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/cli/package.json",
+      "section": "devDependencies",
+      "package": "@vitest/coverage-v8",
+      "declared": "^1.2.2",
+      "currentMajor": 1,
+      "latestInMajor": "1.6.1",
+      "latestOverall": "3.2.4"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/cli/package.json",
+      "section": "devDependencies",
+      "package": "eslint",
+      "declared": "^8.56.0",
+      "currentMajor": 8,
+      "latestInMajor": "8.57.1",
+      "latestOverall": "9.34.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/cli/package.json",
+      "section": "devDependencies",
+      "package": "eslint-config-prettier",
+      "declared": "^9.1.0",
+      "currentMajor": 9,
+      "latestInMajor": "9.1.2",
+      "latestOverall": "10.1.8"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/cli/package.json",
+      "section": "devDependencies",
+      "package": "eslint-plugin-n",
+      "declared": "^16.6.2",
+      "currentMajor": 16,
+      "latestInMajor": "16.6.2",
+      "latestOverall": "17.21.3"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/cli/package.json",
+      "section": "devDependencies",
+      "package": "vitest",
+      "declared": "^1.2.2",
+      "currentMajor": 1,
+      "latestInMajor": "1.6.1",
+      "latestOverall": "3.2.4"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/dynamo/package.json",
+      "section": "devDependencies",
+      "package": "@aws-appsync/eslint-plugin",
+      "declared": "^1.6.0",
+      "currentMajor": 1,
+      "latestInMajor": "1.10.1",
+      "latestOverall": "2.0.2"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/dynamo/package.json",
+      "section": "devDependencies",
+      "package": "@aws-appsync/utils",
+      "declared": "^1.7.0",
+      "currentMajor": 1,
+      "latestInMajor": "1.12.0",
+      "latestOverall": "2.0.3"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/dynamo/package.json",
+      "section": "devDependencies",
+      "package": "@types/node",
+      "declared": "^20.11.17",
+      "currentMajor": 20,
+      "latestInMajor": "20.19.11",
+      "latestOverall": "24.3.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/dynamo/package.json",
+      "section": "devDependencies",
+      "package": "@typescript-eslint/parser",
+      "declared": "^6.21.0",
+      "currentMajor": 6,
+      "latestInMajor": "6.21.0",
+      "latestOverall": "8.41.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/dynamo/package.json",
+      "section": "devDependencies",
+      "package": "@vitest/coverage-v8",
+      "declared": "^1.2.2",
+      "currentMajor": 1,
+      "latestInMajor": "1.6.1",
+      "latestOverall": "3.2.4"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/dynamo/package.json",
+      "section": "devDependencies",
+      "package": "eslint",
+      "declared": "^8.56.0",
+      "currentMajor": 8,
+      "latestInMajor": "8.57.1",
+      "latestOverall": "9.34.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/dynamo/package.json",
+      "section": "devDependencies",
+      "package": "eslint-config-prettier",
+      "declared": "^9.1.0",
+      "currentMajor": 9,
+      "latestInMajor": "9.1.2",
+      "latestOverall": "10.1.8"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/dynamo/package.json",
+      "section": "devDependencies",
+      "package": "vitest",
+      "declared": "^1.2.2",
+      "currentMajor": 1,
+      "latestInMajor": "1.6.1",
+      "latestOverall": "3.2.4"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/test-utils/package.json",
+      "section": "dependencies",
+      "package": "uuid",
+      "declared": "^9.0.1",
+      "currentMajor": 9,
+      "latestInMajor": "9.0.1",
+      "latestOverall": "11.1.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/test-utils/package.json",
+      "section": "devDependencies",
+      "package": "@aws-appsync/utils",
+      "declared": "^1.7.0",
+      "currentMajor": 1,
+      "latestInMajor": "1.12.0",
+      "latestOverall": "2.0.3"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/test-utils/package.json",
+      "section": "devDependencies",
+      "package": "@types/node",
+      "declared": "^20.11.17",
+      "currentMajor": 20,
+      "latestInMajor": "20.19.11",
+      "latestOverall": "24.3.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/test-utils/package.json",
+      "section": "devDependencies",
+      "package": "@typescript-eslint/parser",
+      "declared": "^6.21.0",
+      "currentMajor": 6,
+      "latestInMajor": "6.21.0",
+      "latestOverall": "8.41.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/test-utils/package.json",
+      "section": "devDependencies",
+      "package": "@vitest/coverage-v8",
+      "declared": "^1.2.2",
+      "currentMajor": 1,
+      "latestInMajor": "1.6.1",
+      "latestOverall": "3.2.4"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/test-utils/package.json",
+      "section": "devDependencies",
+      "package": "eslint",
+      "declared": "^8.56.0",
+      "currentMajor": 8,
+      "latestInMajor": "8.57.1",
+      "latestOverall": "9.34.0"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/test-utils/package.json",
+      "section": "devDependencies",
+      "package": "eslint-config-prettier",
+      "declared": "^9.1.0",
+      "currentMajor": 9,
+      "latestInMajor": "9.1.2",
+      "latestOverall": "10.1.8"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/test-utils/package.json",
+      "section": "devDependencies",
+      "package": "eslint-plugin-n",
+      "declared": "^16.6.2",
+      "currentMajor": 16,
+      "latestInMajor": "16.6.2",
+      "latestOverall": "17.21.3"
+    },
+    {
+      "file": "/home/user/appsyncjs/packages/test-utils/package.json",
+      "section": "devDependencies",
+      "package": "vitest",
+      "declared": "^1.2.2",
+      "currentMajor": 1,
+      "latestInMajor": "1.6.1",
+      "latestOverall": "3.2.4"
+    }
+  ]
+}
