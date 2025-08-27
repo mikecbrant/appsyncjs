@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeAll, afterAll } from 'vitest';
 import {
 	AppSyncClient,
 	EvaluateCodeCommand,
@@ -43,6 +43,17 @@ const getCommand = () =>
 	});
 
 describe('throttled-appsync-client', () => {
+    // Use suite-level fake timers to keep time-based behavior deterministic
+    // across all tests in this file.
+    beforeAll(() => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date(0));
+    });
+
+    afterAll(() => {
+        vi.useRealTimers();
+    });
+
 	describe('getThrottledClient', () => {
 		it('returns ThrottledAppsyncClient singleton', async () => {
 			const maxRetries = 10;
@@ -110,20 +121,21 @@ describe('throttled-appsync-client', () => {
 			const client = new ThrottledAppsyncClient({ opsPerSecond });
 
 			const start = Date.now();
-
 			const promises: Promise<EvaluateCodeCommandOutput>[] = [];
 
 			for (let i = 0; i < opCount; i++) {
 				promises.push(client.send(getCommand()));
 			}
 
-			await Promise.all(promises);
+			// Advance the mocked clock enough for all throttled requests to run
+			const totalMs = (opCount / opsPerSecond) * 1000;
+			await vi.advanceTimersByTimeAsync(totalMs);
 
+			await Promise.all(promises);
 			const end = Date.now();
-			const minTime = start + (opCount / opsPerSecond) * 1000;
 
 			expect(mockSend).toHaveBeenCalledTimes(opCount);
-			expect(end).toBeGreaterThanOrEqual(minTime);
+			expect(end - start).toBeGreaterThanOrEqual(totalMs);
 		});
 
 		it('retries as expected', async () => {
@@ -137,7 +149,10 @@ describe('throttled-appsync-client', () => {
 			);
 			const client = new ThrottledAppsyncClient();
 
-			const result = await client.send(getCommand());
+			// Start the request, then flush all timers to process throttle + retry
+			const p = client.send(getCommand());
+			await vi.runAllTimersAsync();
+			const result = await p;
 
 			expect(mockSend).toHaveBeenCalledTimes(2);
 			expect(result).toEqual({});
@@ -157,7 +172,9 @@ describe('throttled-appsync-client', () => {
 			);
 			const client = new ThrottledAppsyncClient({ maxRetries });
 
-			const error = await client.send(getCommand()).catch((err) => err);
+			const p = client.send(getCommand()).catch((err) => err);
+			await vi.runAllTimersAsync();
+			const error = await p;
 
 			expect(mockSend).toHaveBeenCalledTimes(maxRetries + 1);
 			expect(error).toBeInstanceOf(Error);
@@ -176,7 +193,9 @@ describe('throttled-appsync-client', () => {
 			);
 			const client = new ThrottledAppsyncClient();
 
-			const caught = await client.send(getCommand()).catch((err) => err);
+			const p = client.send(getCommand()).catch((err) => err);
+			await vi.runAllTimersAsync();
+			const caught = await p;
 
 			expect(mockSend).toHaveBeenCalledTimes(1);
 			expect(caught).toStrictEqual(error);
