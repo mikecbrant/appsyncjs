@@ -16,7 +16,7 @@ export default defineConfig({
 				lines: 100,
 				statements: 100,
 			},
-			exclude: ['**/test-files/**'],
+			exclude: ['**/test-files/**', 'vitest.config.ts'],
 		},
 		environment: 'node',
 		clearMocks: true,
