@@ -5,7 +5,7 @@ import {
 } from '@aws-appsync/utils';
 import type { DynamoKey } from './types.js';
 
-type PutItemProps = {
+export type PutItemProps = {
 	key: DynamoKey;
 	item: Record<string, unknown>;
 	condition?: ConditionCheckExpression;
