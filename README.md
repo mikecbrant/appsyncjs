@@ -7,7 +7,7 @@ Monorepo for publishing npm modules for use with AWS Appsync JS resolver runtime
 | package                                                           | description                                                                        |
 | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | [@mikecbrant/appsyncjs-cli](packages/cli/README.md)               | CLI utilities for use in `APPSYNC_JS` runtime development. Includes build utility. |
-| [@mikecbrant/appsyncjs-dynamo](packages/dynamo/README.md)         | Small helpers for building DynamoDB requests in `APPSYNC_JS` resolvers.            |
+| [@mikecbrant/appsyncjs-dynamo](packages/dynamo/README.md)         | Helpers for building DynamoDB requests in `APPSYNC_JS` resolvers.            |
 | [@mikecbrant/appsyncjs-test-utils](packages/test-utils/README.md) | Utilities for unit and functional testing of `APPSYNC_JS` resolvers.               |
 
 All code in released packages is fully tested.

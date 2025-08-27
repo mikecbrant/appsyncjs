@@ -15,24 +15,16 @@ Peer dependency: `@aws-appsync/utils` (the request objects use the AppSync `util
 
 1) Basic GetItem
 
-- Request
-
 ```ts
 // resolvers/getUser.ts
 import { getItem } from '@mikecbrant/appsyncjs-dynamo';
+import { util } from '@aws-appsync/utils';
 
 export function request(ctx) {
 	return getItem({
 		key: { pk: `USER#${ctx.args.id}` },
 	});
 }
-```
-
-- Response (trivia-style format)
-
-```ts
-// resolvers/getUser.ts
-import { util } from '@aws-appsync/utils';
 
 export function response(ctx) {
 	if (ctx.error) {
@@ -45,11 +37,10 @@ export function response(ctx) {
 
 2) GetItem with strongly consistent read and a projection
 
-- Request
-
 ```ts
 // resolvers/getUser.ts
 import { getItem } from '@mikecbrant/appsyncjs-dynamo';
+import { util } from '@aws-appsync/utils';
 
 export function request(ctx) {
 	return getItem({
@@ -58,13 +49,6 @@ export function request(ctx) {
 		returnedFields: ['pk', 'name', 'email'],
 	});
 }
-```
-
-- Response (trivia-style format)
-
-```ts
-// resolvers/getUser.ts
-import { util } from '@aws-appsync/utils';
 
 export function response(ctx) {
 	if (ctx.error) {
@@ -75,8 +59,6 @@ export function response(ctx) {
 ```
 
 3) Use `buildProjectionExpression` with your own DynamoDB request
-
-- Request
 
 ```ts
 // resolvers/listUserPosts.ts
@@ -96,13 +78,6 @@ export function request(ctx) {
 		projection,
 	};
 }
-```
-
-- Response (trivia-style format)
-
-```ts
-// resolvers/listUserPosts.ts
-import { util } from '@aws-appsync/utils';
 
 export function response(ctx) {
 	if (ctx.error) {
@@ -114,6 +89,4 @@ export function response(ctx) {
 }
 ```
 
----
 
-API surface is intentionally small. If there are other DynamoDB helpers you’d like to see added, please open an issue with your use case.
