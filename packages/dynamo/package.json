@@ -44,7 +44,7 @@
 		"@aws-appsync/eslint-plugin": "^1.6.0",
 		"@aws-appsync/utils": "^1.7.0",
 		"@mikecbrant/appsyncjs-test-utils": "workspace:*",
-		"@types/node": "^20.11.17",
+		"@types/node": "^24.0.0",
 		"@typescript-eslint/parser": "^6.21.0",
 		"@vitest/coverage-v8": "^1.2.2",
 		"eslint": "^8.56.0",
