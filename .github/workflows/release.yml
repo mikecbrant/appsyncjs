@@ -24,7 +24,7 @@ jobs:
       - name: Install pnpm and dependencies
         uses: pnpm/action-setup@v4
         with:
-          version: 8.15.1
+          version: latest
           run_install: true
       - name: Run Tests
         run: pnpm test
