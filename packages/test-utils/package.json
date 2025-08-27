@@ -52,7 +52,7 @@
 		"@aws-appsync/utils": "^1.7.0",
 		"@aws-sdk/client-appsync": "^3.515.0",
 		"@mikecbrant/appsyncjs-cli": "^1.0.1",
-		"@types/node": "^20.11.17",
+		"@types/node": "24.3.0",
 		"@typescript-eslint/parser": "^6.21.0",
 		"@vitest/coverage-v8": "^1.2.2",
 		"eslint": "^8.56.0",
