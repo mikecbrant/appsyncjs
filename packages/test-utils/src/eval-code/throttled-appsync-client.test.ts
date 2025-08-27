@@ -53,6 +53,7 @@ describe('throttled-appsync-client', () => {
     afterAll(() => {
         vi.useRealTimers();
     });
+
 	describe('getThrottledClient', () => {
 		it('returns ThrottledAppsyncClient singleton', async () => {
 			const maxRetries = 10;
