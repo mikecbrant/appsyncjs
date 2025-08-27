@@ -8,10 +8,12 @@ import type { DynamoKey } from './types.js';
 export type DeleteItemProps = {
 	key: DynamoKey;
 	condition?: DynamoDBExpression;
+	/** When true, requests DynamoDB to return the deleted item's old values */
+	returnDeleted?: boolean;
 };
 
 const deleteItem = (props: DeleteItemProps): DynamoDBDeleteItemRequest => {
-	const { key, condition } = props;
+	const { key, condition, returnDeleted } = props;
 
 	const request: DynamoDBDeleteItemRequest = {
 		operation: 'DeleteItem',
@@ -20,6 +22,11 @@ const deleteItem = (props: DeleteItemProps): DynamoDBDeleteItemRequest => {
 
 	if (condition) {
 		request.condition = condition;
+	}
+
+	if (returnDeleted) {
+		// In DynamoDB API, this includes the deleted item's previous attributes in the result
+		(request as any).ReturnValues = 'ALL_OLD';
 	}
 
 	return request;

@@ -6,6 +6,7 @@ This package currently exposes:
 
 - `getItem(props)` — builds a valid `DynamoDBGetItemRequest` object.
 - `deleteItem(props)` — builds a valid `DynamoDBDeleteItemRequest` object.
+- `updateItem(props)` — builds a valid `DynamoDBUpdateItemRequest` object.
 - `buildProjectionExpression(fields)` — builds a DynamoDB projection expression `{ expression, expressionNames }` from a string array.
 
 Peer dependency: `@aws-appsync/utils` (the request objects use the AppSync `util.dynamodb` helpers under the hood).
@@ -55,6 +56,25 @@ export function response(ctx) {
 	if (ctx.error) {
 		util.error(ctx.error.message, ctx.error.type);
 	}
+	return ctx.result ?? null;
+}
+```
+
+2a) DeleteItem and return deleted item
+
+```ts
+// resolvers/deleteUser.ts
+import { deleteItem } from '@mikecbrant/appsyncjs-dynamo';
+
+export function request(ctx) {
+	return deleteItem({
+		key: { pk: `USER#${ctx.args.id}` },
+		returnDeleted: true, // adds returnValues: 'ALL_OLD' (DynamoDB API: ReturnValues)
+	});
+}
+
+export function response(ctx) {
+	// When returnDeleted is true, ctx.result contains the deleted item's previous attributes
 	return ctx.result ?? null;
 }
 ```
@@ -113,4 +133,31 @@ export function response(ctx) {
 }
 ```
 
+5) Basic UpdateItem
+
+```ts
+// resolvers/upvotePost.ts
+import { updateItem } from '@mikecbrant/appsyncjs-dynamo';
+import { util } from '@aws-appsync/utils';
+
+export function request(ctx) {
+	return updateItem({
+		key: { pk: `POST#${ctx.args.id}` },
+		update: {
+			expression: 'ADD #upvotes :one',
+			expressionNames: { '#upvotes': 'upvotes' },
+			expressionValues: { ':one': { N: 1 } },
+		},
+		// optional condition:
+		// condition: { expression: 'attribute_exists(#pk)', expressionNames: { '#pk': 'pk' } },
+	});
+}
+
+export function response(ctx) {
+	if (ctx.error) {
+		util.error(ctx.error.message, ctx.error.type);
+	}
+	return ctx.result; // UpdateItem typically returns the updated item
+}
+```
 

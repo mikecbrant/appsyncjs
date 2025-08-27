@@ -51,4 +51,16 @@ describe('deleteItem', () => {
 			condition,
 		});
 	});
+
+	it('when returnDeleted=true, sets ReturnValues to ALL_OLD', () => {
+		const key = { pk: 'USER#3' };
+
+		const request = deleteItem({ key, returnDeleted: true });
+
+		expect(request).toEqual({
+			operation: 'DeleteItem',
+			key: { pk: { S: 'USER#3' } },
+			ReturnValues: 'ALL_OLD',
+		});
+	});
 });
