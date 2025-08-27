@@ -10,20 +10,10 @@ type UpdateItemProps = {
 	key: DynamoKey;
 	update: DynamoDBExpression;
 	condition?: ConditionCheckExpression;
-	customPartitionKey?: string;
-	populateIndexFields?: boolean;
-	_version?: number;
 };
 
 const updateItem = (props: UpdateItemProps): DynamoDBUpdateItemRequest => {
-	const {
-		key,
-		update,
-		condition,
-		customPartitionKey,
-		populateIndexFields,
-		_version,
-	} = props;
+	const { key, update, condition } = props;
 
 	const request: DynamoDBUpdateItemRequest = {
 		operation: 'UpdateItem',
@@ -33,15 +23,6 @@ const updateItem = (props: UpdateItemProps): DynamoDBUpdateItemRequest => {
 
 	if (condition) {
 		request.condition = condition;
-	}
-	if (customPartitionKey) {
-		request.customPartitionKey = customPartitionKey;
-	}
-	if (populateIndexFields !== undefined) {
-		request.populateIndexFields = populateIndexFields;
-	}
-	if (_version !== undefined) {
-		request._version = _version;
 	}
 
 	return request;

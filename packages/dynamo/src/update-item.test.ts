@@ -54,25 +54,5 @@ describe('updateItem', () => {
 		expect(request.condition).toEqual(condition);
 	});
 
-	it('passes through optional properties when provided', () => {
-		const key = { id: 'abc' };
-		const update = { expression: 'REMOVE #old', expressionNames: { '#old': 'legacy' } };
-
-		const request = updateItem({
-			key,
-			update,
-			customPartitionKey: 'tenant#1',
-			populateIndexFields: false,
-			_version: 7,
-		});
-
-		expect(request).toEqual({
-			operation: 'UpdateItem',
-			key: { id: { S: 'abc' } },
-			update,
-			customPartitionKey: 'tenant#1',
-			populateIndexFields: false,
-			_version: 7,
-		});
-	});
+    // No other passthroughs are supported; only optional condition is allowed.
 });

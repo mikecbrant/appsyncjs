@@ -105,11 +105,8 @@ export function request(ctx) {
 			expressionNames: { '#upvotes': 'upvotes' },
 			expressionValues: { ':one': { N: 1 } },
 		},
-		// optional
+		// optional condition:
 		// condition: { expression: 'attribute_exists(#pk)', expressionNames: { '#pk': 'pk' } },
-		// customPartitionKey: 'tenant#1',
-		// populateIndexFields: false,
-		// _version: 3,
 	});
 }
 
