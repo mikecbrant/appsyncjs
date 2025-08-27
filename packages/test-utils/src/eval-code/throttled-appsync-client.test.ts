@@ -105,25 +105,33 @@ describe('throttled-appsync-client', () => {
 		});
 
 		it('throttles as expected', async () => {
-			const opsPerSecond = 100;
-			const opCount = 100;
-			const client = new ThrottledAppsyncClient({ opsPerSecond });
+			// Use fake timers to eliminate real-time flakiness and make elapsed time deterministic
+			vi.useFakeTimers();
+			vi.setSystemTime(new Date(0));
+			try {
+				const opsPerSecond = 100;
+				const opCount = 100;
+				const client = new ThrottledAppsyncClient({ opsPerSecond });
 
-			const start = Date.now();
+				const start = Date.now();
+				const promises: Promise<EvaluateCodeCommandOutput>[] = [];
 
-			const promises: Promise<EvaluateCodeCommandOutput>[] = [];
+				for (let i = 0; i < opCount; i++) {
+					promises.push(client.send(getCommand()));
+				}
 
-			for (let i = 0; i < opCount; i++) {
-				promises.push(client.send(getCommand()));
+				// Advance the mocked clock enough for all throttled requests to run
+				const totalMs = (opCount / opsPerSecond) * 1000;
+				await vi.advanceTimersByTimeAsync(totalMs);
+
+				await Promise.all(promises);
+				const end = Date.now();
+
+				expect(mockSend).toHaveBeenCalledTimes(opCount);
+				expect(end - start).toBeGreaterThanOrEqual(totalMs);
+			} finally {
+				vi.useRealTimers();
 			}
-
-			await Promise.all(promises);
-
-			const end = Date.now();
-			const minTime = start + (opCount / opsPerSecond) * 1000;
-
-			expect(mockSend).toHaveBeenCalledTimes(opCount);
-			expect(end).toBeGreaterThanOrEqual(minTime);
 		});
 
 		it('retries as expected', async () => {
