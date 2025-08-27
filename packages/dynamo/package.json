@@ -1,6 +1,6 @@
 {
 	"name": "@mikecbrant/appsyncjs-dynamo",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Dynamo library for Appsync JS runtime",
 	"type": "module",
 	"main": "dist/index.js",
