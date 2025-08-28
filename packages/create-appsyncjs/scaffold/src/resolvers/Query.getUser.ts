@@ -1,11 +1,18 @@
 import { getItem } from '@mikecbrant/appsyncjs-dynamo';
-import type { AppSyncIdentity, AppSyncResolverEvent } from '@aws-appsync/utils';
+import type {
+	AppSyncResolverEvent,
+	DynamoDBGetItemRequest,
+} from '@aws-appsync/utils';
 
-export function request(ctx: any) {
-	const { id } = ctx.args as { id: string };
+type GetUserArgs = { id: string };
+
+export function request(
+	ctx: AppSyncResolverEvent<GetUserArgs>,
+): DynamoDBGetItemRequest {
+	const { id } = ctx.args;
 	return getItem({ key: { pk: id } });
 }
 
-export function response(ctx: any) {
+export function response(ctx: AppSyncResolverEvent<GetUserArgs>) {
 	return ctx.result;
 }

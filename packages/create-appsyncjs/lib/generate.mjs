@@ -22,7 +22,8 @@ function substitute(content, vars) {
 		.replaceAll('__REGION__', vars.REGION)
 		.replaceAll('__USER_TABLE_NAME__', vars.USER_TABLE_NAME)
 		.replaceAll('__DYNAMO_VERSION__', vars.DYNAMO_VERSION)
-		.replaceAll('__TEST_UTILS_VERSION__', vars.TEST_UTILS_VERSION);
+		.replaceAll('__TEST_UTILS_VERSION__', vars.TEST_UTILS_VERSION)
+		.replaceAll('__AUTH_MODE__', vars.AUTH_MODE);
 }
 
 async function copyDir(srcDir, destDir, vars) {

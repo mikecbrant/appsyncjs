@@ -1,9 +1,16 @@
 import { putItem } from '@mikecbrant/appsyncjs-dynamo';
+import type {
+	AppSyncResolverEvent,
+	DynamoDBPutItemRequest,
+} from '@aws-appsync/utils';
 
-export function request(ctx: any) {
-	const { input } = ctx.args as {
-		input: { id: string; email: string; name: string };
-	};
+type PutUserInput = { id: string; email: string; name: string };
+type PutUserArgs = { input: PutUserInput };
+
+export function request(
+	ctx: AppSyncResolverEvent<PutUserArgs>,
+): DynamoDBPutItemRequest {
+	const { input } = ctx.args;
 	const { id, email, name } = input;
 	const now = new Date().toISOString();
 	return putItem({
@@ -12,7 +19,7 @@ export function request(ctx: any) {
 	});
 }
 
-export function response(ctx: any) {
+export function response(ctx: AppSyncResolverEvent<PutUserArgs>) {
 	// Return the input as a convenience; DynamoDB PutItem without ReturnValues doesn't return the item
 	return { ...ctx.args.input };
 }

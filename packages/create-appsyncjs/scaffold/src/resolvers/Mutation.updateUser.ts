@@ -1,10 +1,22 @@
 import { updateItem } from '@mikecbrant/appsyncjs-dynamo';
-import { util } from '@aws-appsync/utils';
+import {
+	util,
+	type AppSyncResolverEvent,
+	type DynamoDBUpdateItemRequest,
+	type DynamoDBExpression,
+} from '@aws-appsync/utils';
 
-export function request(ctx: any) {
-	const { input } = ctx.args as {
-		input: { id: string; email?: string | null; name?: string | null };
-	};
+type UpdateUserInput = {
+	id: string;
+	email?: string | null;
+	name?: string | null;
+};
+type UpdateUserArgs = { input: UpdateUserInput };
+
+export function request(
+	ctx: AppSyncResolverEvent<UpdateUserArgs>,
+): DynamoDBUpdateItemRequest {
+	const { input } = ctx.args;
 	const { id, ...attrs } = input;
 
 	// Build a DynamoDB update expression based on provided fields
@@ -25,7 +37,7 @@ export function request(ctx: any) {
 	values[':updatedAt'] = new Date().toISOString();
 	sets.push('#updatedAt = :updatedAt');
 
-	const update = {
+	const update: DynamoDBExpression = {
 		expression: `SET ${sets.join(', ')}`,
 		expressionNames: names,
 		expressionValues: util.dynamodb.toMapValues(values),
@@ -34,6 +46,6 @@ export function request(ctx: any) {
 	return updateItem({ key: { pk: id }, update });
 }
 
-export function response(ctx: any) {
+export function response(ctx: AppSyncResolverEvent<UpdateUserArgs>) {
 	return { id: ctx.args.input.id, ...ctx.args.input };
 }

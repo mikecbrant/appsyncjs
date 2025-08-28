@@ -3,12 +3,12 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 import { generate } from './lib/generate.mjs';
 
-export async function create({ templateDir, dest }) {
-	const ctx = await buildContext({ templateDir, dest });
+export async function create({ templateDir, dest, auth = 'none' }) {
+	const ctx = await buildContext({ templateDir, dest, auth });
 	await generate(ctx);
 }
 
-async function buildContext({ templateDir, dest }) {
+async function buildContext({ templateDir, dest, auth }) {
 	const appName = path.basename(dest).replace(/[^a-zA-Z0-9-_]/g, '-');
 	// Pull current versions of internal packages from this repo's package.json files at publish-time.
 	// At runtime (consumer env), these values are baked into the template placeholders.
@@ -30,6 +30,8 @@ async function buildContext({ templateDir, dest }) {
 		testUtilsVersion = `^${tu.version}`;
 	} catch {}
 
+	const authMode = auth === 'cognito' ? 'cognito' : 'none';
+
 	return {
 		templateDir,
 		dest,
@@ -39,6 +41,7 @@ async function buildContext({ templateDir, dest }) {
 			USER_TABLE_NAME: 'Users',
 			DYNAMO_VERSION: dynamoVersion,
 			TEST_UTILS_VERSION: testUtilsVersion,
+			AUTH_MODE: authMode,
 		},
 	};
 }
