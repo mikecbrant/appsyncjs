@@ -6,6 +6,7 @@ This package currently exposes:
 
 - `getItem(props)` — builds a valid `DynamoDBGetItemRequest` object.
 - `putItem(props)` — builds a valid `DynamoDBPutItemRequest` object.
+- `deleteItem(props)` — builds a valid `DynamoDBDeleteItemRequest` object.
 - `updateItem(props)` — builds a valid `DynamoDBUpdateItemRequest` object.
 - `buildProjectionExpression(fields)` — builds a DynamoDB projection expression `{ expression, expressionNames }` from a string array.
 
@@ -37,7 +38,49 @@ export function response(ctx) {
 }
 ```
 
-2) GetItem with strongly consistent read and a projection
+2) DeleteItem (basic)
+
+```ts
+// resolvers/deleteUser.ts
+import { deleteItem } from '@mikecbrant/appsyncjs-dynamo';
+import { util } from '@aws-appsync/utils';
+
+export function request(ctx) {
+	return deleteItem({
+		key: { pk: `USER#${ctx.args.id}` },
+		// optional: provide a condition
+		// condition: { expression: 'attribute_exists(#pk)', expressionNames: { '#pk': 'pk' }, expressionValues: {} },
+	});
+}
+
+export function response(ctx) {
+	if (ctx.error) {
+		util.error(ctx.error.message, ctx.error.type);
+	}
+	return ctx.result ?? null;
+}
+```
+
+2a) DeleteItem and return deleted item
+
+```ts
+// resolvers/deleteUser.ts
+import { deleteItem } from '@mikecbrant/appsyncjs-dynamo';
+
+export function request(ctx) {
+	return deleteItem({
+		key: { pk: `USER#${ctx.args.id}` },
+		returnDeleted: true, // adds returnValues: 'ALL_OLD' (DynamoDB API: ReturnValues)
+	});
+}
+
+export function response(ctx) {
+	// When returnDeleted is true, ctx.result contains the deleted item's previous attributes
+	return ctx.result ?? null;
+}
+```
+
+3) GetItem with strongly consistent read and a projection
 
 ```ts
 // resolvers/getUser.ts
@@ -60,7 +103,7 @@ export function response(ctx) {
 }
 ```
 
-3) Use `buildProjectionExpression` with your own DynamoDB request
+4) Use `buildProjectionExpression` with your own DynamoDB request
 
 ```ts
 // resolvers/listUserPosts.ts
@@ -91,7 +134,7 @@ export function response(ctx) {
 }
 ```
 
-4) Basic PutItem
+5) Basic PutItem
 
 ```ts
 // resolvers/createUser.ts

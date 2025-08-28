@@ -6,7 +6,7 @@ import {
 } from '@aws-appsync/utils';
 import type { DynamoKey } from './types.js';
 
-type UpdateItemProps = {
+export type UpdateItemProps = {
 	key: DynamoKey;
 	update: DynamoDBExpression;
 	condition?: ConditionCheckExpression;
