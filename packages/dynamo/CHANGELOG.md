@@ -1,5 +1,13 @@
 # @mikecbrant/appsyncjs-dynamo
 
+## 0.2.0
+
+### Minor Changes
+
+- c9632b2: Add a typed `updateItem` utility and export it on the public surface of `@mikecbrant/appsyncjs-dynamo`.
+
+  Refs PR #10, MIK-11.
+
 ## 0.1.0
 
 ### Minor Changes
