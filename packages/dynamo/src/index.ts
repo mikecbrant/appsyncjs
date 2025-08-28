@@ -4,7 +4,6 @@ import putItem from './put-item.js';
 import updateItem from './update-item.js';
 import { buildProjectionExpression } from './utils.js';
 
-export type { PutItemProps } from './put-item.js';
 
 const Dynamo = {
 	buildProjectionExpression,
