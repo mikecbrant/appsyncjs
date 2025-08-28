@@ -15,7 +15,7 @@ export type DeleteItemProps = {
 const deleteItem = (props: DeleteItemProps): DynamoDBDeleteItemRequest => {
 	const { key, condition, returnDeleted } = props;
 
-	const request: DynamoDBDeleteItemRequest = {
+	const request: DynamoDBDeleteItemRequest & { returnValues?: 'ALL_OLD' } = {
 		operation: 'DeleteItem',
 		key: util.dynamodb.toMapValues(key),
 	};
@@ -25,8 +25,8 @@ const deleteItem = (props: DeleteItemProps): DynamoDBDeleteItemRequest => {
 	}
 
 	if (returnDeleted) {
-		// In DynamoDB API, this includes the deleted item's previous attributes in the result
-		(request as any).ReturnValues = 'ALL_OLD';
+		// In DynamoDB/AppSync request shape, this includes the deleted item's previous attributes in the result
+		request.returnValues = 'ALL_OLD';
 	}
 
 	return request;
