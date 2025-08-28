@@ -134,7 +134,7 @@ export function response(ctx) {
 }
 ```
 
-4) Basic PutItem
+5) Basic PutItem
 
 ```ts
 // resolvers/createUser.ts
@@ -192,7 +192,7 @@ export function response(ctx) {
 }
 ```
 
-5) Basic UpdateItem
+6) Basic UpdateItem
 
 ```ts
 // resolvers/upvotePost.ts
