@@ -43,16 +43,16 @@ const getCommand = () =>
 	});
 
 describe('throttled-appsync-client', () => {
-    // Use suite-level fake timers to keep time-based behavior deterministic
-    // across all tests in this file.
-    beforeAll(() => {
-        vi.useFakeTimers();
-        vi.setSystemTime(new Date(0));
-    });
+	// Use suite-level fake timers to keep time-based behavior deterministic
+	// across all tests in this file.
+	beforeAll(() => {
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date(0));
+	});
 
-    afterAll(() => {
-        vi.useRealTimers();
-    });
+	afterAll(() => {
+		vi.useRealTimers();
+	});
 
 	describe('getThrottledClient', () => {
 		it('returns ThrottledAppsyncClient singleton', async () => {

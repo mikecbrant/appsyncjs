@@ -54,5 +54,5 @@ describe('updateItem', () => {
 		expect(request.condition).toEqual(condition);
 	});
 
-    // No other passthroughs are supported; only optional condition is allowed.
+	// No other passthroughs are supported; only optional condition is allowed.
 });
