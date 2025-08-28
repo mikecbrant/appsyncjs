@@ -17,9 +17,9 @@ const Dynamo = {
 export {
 	Dynamo as default,
 	buildProjectionExpression,
+	deleteItem,
 	getItem,
 	putItem,
-	deleteItem,
 	updateItem,
 };
 
@@ -27,3 +27,4 @@ export {
 export type { DynamoKey, DynamoKeyField } from './types.js';
 export type { GetItemProps } from './get-item.js';
 export type { DeleteItemProps } from './delete-item.js';
+export type { UpdateItemProps } from './update-item.js';
