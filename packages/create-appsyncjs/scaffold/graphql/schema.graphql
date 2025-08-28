@@ -4,31 +4,31 @@ scalar AWSDateTime
 A user account
 """
 type User {
-  id: ID!
-  email: String!
-  name: String!
-  createdAt: AWSDateTime
-  updatedAt: AWSDateTime
+	id: ID!
+	email: String!
+	name: String!
+	createdAt: AWSDateTime
+	updatedAt: AWSDateTime
 }
 
 type Query {
-  getUser(id: ID!): User
+	getUser(id: ID!): User
 }
 
 input PutUserInput {
-  id: ID!
-  email: String!
-  name: String!
+	id: ID!
+	email: String!
+	name: String!
 }
 
 input UpdateUserInput {
-  id: ID!
-  email: String
-  name: String
+	id: ID!
+	email: String
+	name: String
 }
 
 type Mutation {
-  putUser(input: PutUserInput!): User
-  updateUser(input: UpdateUserInput!): User
-  deleteUser(id: ID!): User
+	putUser(input: PutUserInput!): User
+	updateUser(input: UpdateUserInput!): User
+	deleteUser(id: ID!): User
 }

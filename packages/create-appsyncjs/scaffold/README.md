@@ -1,4 +1,4 @@
-# __APP_NAME__
+# **APP_NAME**
 
 A minimal SST-based AWS AppSync + DynamoDB starter with example User CRUD resolvers using `@mikecbrant/appsyncjs-dynamo` and tests with `@mikecbrant/appsyncjs-test-utils`.
 
