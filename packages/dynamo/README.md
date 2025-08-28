@@ -6,6 +6,7 @@ This package currently exposes:
 
 - `getItem(props)` — builds a valid `DynamoDBGetItemRequest` object.
 - `putItem(props)` — builds a valid `DynamoDBPutItemRequest` object.
+- `updateItem(props)` — builds a valid `DynamoDBUpdateItemRequest` object.
 - `buildProjectionExpression(fields)` — builds a DynamoDB projection expression `{ expression, expressionNames }` from a string array.
 
 Peer dependency: `@aws-appsync/utils` (the request objects use the AppSync `util.dynamodb` helpers under the hood).
@@ -148,6 +149,33 @@ export function response(ctx) {
 }
 ```
 
+6) Basic UpdateItem
+
+```ts
+// resolvers/upvotePost.ts
+import { updateItem } from '@mikecbrant/appsyncjs-dynamo';
+import { util } from '@aws-appsync/utils';
+
+export function request(ctx) {
+	return updateItem({
+		key: { pk: `POST#${ctx.args.id}` },
+		update: {
+			expression: 'ADD #upvotes :one',
+			expressionNames: { '#upvotes': 'upvotes' },
+			expressionValues: { ':one': util.dynamodb.toDynamoDB(1) },
+		},
+		// optional condition:
+		// condition: { expression: 'attribute_exists(#pk)', expressionNames: { '#pk': 'pk' } },
+	});
+}
+
+export function response(ctx) {
+	if (ctx.error) {
+		util.error(ctx.error.message, ctx.error.type);
+	}
+	return ctx.result; // UpdateItem typically returns the updated item
+}
+```
 
 ## API: `putItem(props)`
 
@@ -167,4 +195,21 @@ Notes
 - `condition` is omitted from the request when not provided.
 - Under the hood, both `key` and `item` are converted with `util.dynamodb.toMapValues` from `@aws-appsync/utils`.
 
+## API: `updateItem(props)`
+
+Builds and returns a `DynamoDBUpdateItemRequest` suitable for AppSync DynamoDB resolvers. Import it as a named export:
+
+```ts
+import { updateItem } from '@mikecbrant/appsyncjs-dynamo';
+```
+
+Parameters:
+
+- `key: DynamoKey` — the primary key for the item.
+- `update: DynamoDBExpression` — the update expression and its names/values.
+- `condition?: ConditionCheckExpression` — optional conditional expression to enforce on update.
+
+Notes
+- `condition` is omitted from the request when not provided.
+- Under the hood, `key` is converted with `util.dynamodb.toMapValues` from `@aws-appsync/utils`.
 
