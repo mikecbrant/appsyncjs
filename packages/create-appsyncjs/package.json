@@ -1,0 +1,50 @@
+{
+  "name": "@mikecbrant/create-appsyncjs",
+  "version": "0.1.0",
+  "description": "Scaffold generator for an SST-based AWS AppSync + DynamoDB repo with example User CRUD using @mikecbrant/appsyncjs-dynamo and tests using @mikecbrant/appsyncjs-test-utils.",
+  "type": "module",
+  "main": "index.mjs",
+  "files": [
+    "cli.mjs",
+    "index.mjs",
+    "lib/*.mjs",
+    "scaffold/**"
+  ],
+  "bin": {
+    "create-appsyncjs": "./cli.mjs"
+  },
+  "keywords": [
+    "aws",
+    "appsync",
+    "sst",
+    "graphql",
+    "dynamodb",
+    "scaffold",
+    "generator",
+    "create"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikecbrant/appsyncjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mikecbrant/appsyncjs/issues"
+  },
+  "homepage": "https://github.com/mikecbrant/appsyncjs#readme",
+  "author": "Mike Brant",
+  "license": "MIT",
+  "scripts": {
+    "build": "echo 'no build'",
+    "clean": "rm -rf ./node_modules",
+    "lint": "eslint --fix --ext js,cjs,mjs,ts",
+    "lint:check": "eslint --ext js,cjs,mjs,ts",
+    "test": "echo 'no tests'"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,30 @@
+{
+  "name": "__APP_NAME__",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SST AppSync + DynamoDB starter with User CRUD using @mikecbrant/appsyncjs-dynamo",
+  "scripts": {
+    "build:resolvers": "appsyncjs build -o appsync -i 'src/resolvers/**/*.ts'",
+    "deploy": "sst deploy",
+    "remove": "sst remove",
+    "dev": "sst dev",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@mikecbrant/appsyncjs-dynamo": "__DYNAMO_VERSION__"
+  },
+  "devDependencies": {
+    "@aws-appsync/utils": "^1.12.0",
+    "@mikecbrant/appsyncjs-cli": "^1.0.2",
+    "@mikecbrant/appsyncjs-test-utils": "__TEST_UTILS_VERSION__",
+    "aws-cdk-lib": "^2.149.0",
+    "constructs": "^10.3.0",
+    "sst": "^2.43.0",
+    "typescript": "^5.3.3",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
