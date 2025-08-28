@@ -13,7 +13,7 @@ pnpm dlx @mikecbrant/create-appsyncjs my-app
 With npm:
 
 ```bash
-npm create @mikecbrant/appsyncjs@latest my-app
+npm create @mikecbrant/create-appsyncjs@latest my-app
 # or
 npx @mikecbrant/create-appsyncjs my-app
 ```
