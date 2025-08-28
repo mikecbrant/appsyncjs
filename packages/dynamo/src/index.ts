@@ -27,5 +27,5 @@ export {
 export type { DynamoKey, DynamoKeyField } from './types.js';
 export type { DeleteItemProps } from './delete-item.js';
 export type { GetItemProps } from './get-item.js';
-export type { DeleteItemProps } from './delete-item.js';
+export type { PutItemProps } from './put-item.js';
 export type { UpdateItemProps } from './update-item.js';
