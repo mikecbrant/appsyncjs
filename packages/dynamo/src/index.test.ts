@@ -9,7 +9,13 @@ import Dynamo, {
 
 describe('index', () => {
 	it('has expected exports', () => {
-		[buildProjectionExpression, getItem, putItem, deleteItem, updateItem].forEach((exp) => {
+		[
+			buildProjectionExpression,
+			getItem,
+			putItem,
+			deleteItem,
+			updateItem,
+		].forEach((exp) => {
 			expect(exp).toBeTypeOf('function');
 			const name = exp.name;
 			expect(Dynamo[name]).toStrictEqual(exp);

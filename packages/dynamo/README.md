@@ -16,7 +16,7 @@ Peer dependency: `@aws-appsync/utils` (the request objects use the AppSync `util
 
 > The snippets below are written for the AppSync JS runtime resolver format and show both request and response handlers.
 
-1) Basic GetItem
+1. Basic GetItem
 
 ```ts
 // resolvers/getUser.ts
@@ -38,7 +38,7 @@ export function response(ctx) {
 }
 ```
 
-2) DeleteItem (basic)
+2. DeleteItem (basic)
 
 ```ts
 // resolvers/deleteUser.ts
@@ -80,7 +80,7 @@ export function response(ctx) {
 }
 ```
 
-3) GetItem with strongly consistent read and a projection
+3. GetItem with strongly consistent read and a projection
 
 ```ts
 // resolvers/getUser.ts
@@ -103,7 +103,7 @@ export function response(ctx) {
 }
 ```
 
-4) Use `buildProjectionExpression` with your own DynamoDB request
+4. Use `buildProjectionExpression` with your own DynamoDB request
 
 ```ts
 // resolvers/listUserPosts.ts
@@ -118,7 +118,9 @@ export function request(ctx) {
 		query: {
 			expression: '#pk = :pk',
 			expressionNames: { '#pk': 'pk' },
-			expressionValues: { ':pk': util.dynamodb.toDynamoDB(`USER#${ctx.args.id}`) },
+			expressionValues: {
+				':pk': util.dynamodb.toDynamoDB(`USER#${ctx.args.id}`),
+			},
 		},
 		projection,
 	};
@@ -134,7 +136,7 @@ export function response(ctx) {
 }
 ```
 
-5) Basic PutItem
+5. Basic PutItem
 
 ```ts
 // resolvers/createUser.ts
@@ -164,7 +166,7 @@ export function response(ctx) {
 }
 ```
 
-5) Conditional write with `condition`
+5. Conditional write with `condition`
 
 ```ts
 // resolvers/createUserIfMissing.ts
@@ -192,7 +194,7 @@ export function response(ctx) {
 }
 ```
 
-6) Basic UpdateItem
+6. Basic UpdateItem
 
 ```ts
 // resolvers/upvotePost.ts
@@ -235,6 +237,7 @@ Parameters (`PutItemProps`):
 - `condition?: ConditionCheckExpression` — optional conditional expression to enforce on write (for example, `attribute_not_exists(#pk)`).
 
 Notes
+
 - `condition` is omitted from the request when not provided.
 - Under the hood, both `key` and `item` are converted with `util.dynamodb.toMapValues` from `@aws-appsync/utils`.
 
@@ -253,6 +256,6 @@ Parameters:
 - `condition?: ConditionCheckExpression` — optional conditional expression to enforce on update.
 
 Notes
+
 - `condition` is omitted from the request when not provided.
 - Under the hood, `key` is converted with `util.dynamodb.toMapValues` from `@aws-appsync/utils`.
-

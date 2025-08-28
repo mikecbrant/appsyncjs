@@ -196,7 +196,7 @@ import {
 ```js
 const { error, evaluationResult, logs } = await evaluateFile({
 	file: '/path/to/built/file.js',
-	context: { args: {}, stash: {}, /* ...other props */ }, // Appsync context object
+	context: { args: {}, stash: {} /* ...other props */ }, // Appsync context object
 	function: 'request', // or 'response' depending on function to test
 });
 ```

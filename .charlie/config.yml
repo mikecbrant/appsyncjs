@@ -1,12 +1,40 @@
+## Charlie repository configuration
+## Docs: https://docs.charlielabs.ai/config
+
+## Files/folders Charlie should ignore when scanning the repo
+ignorePatterns:
+  - '**/*.lock'
+  - '**/node_modules'
+  - '**/.env'
+  - '**/dist/**'
+  - '**/coverage/**'
+
+## Commands Charlie will run for verification and fixes
 checkCommands:
-  # Apply automatic fixes: format (Prettier) and ESLint --fix across workspaces
+  # Apply automatic fixes: Prettier + ESLint --fix across workspaces
   fix: pnpm run fmt && pnpm run lint
 
   # Lint in check mode (no writes)
   lint: pnpm run lint:check
 
+  # TypeScript verification (leverages package builds which run `tsc`)
+  types: pnpm run build
+
   # Run tests via the root script (includes build + lint + per‑package tests)
   test: pnpm run test
 
-  # Optional: build packages (TypeScript compile) — used by Charlie when a build step is explicitly requested
+  # Optional: explicit build step (used when a build is requested)
   build: pnpm run build
+
+## Beta/experimental behaviors (enabled per product guidance)
+beta:
+  # Auto‑review PRs when Charlie has relevant context
+  automaticallyReviewPullRequests: true
+  # Avoid posting empty/no‑op review comments
+  skipEmptyReviews: true
+  # Post only the most actionable comments in reviews
+  filterReviewComments: true
+  # Allow Charlie to submit "Approve" reviews when appropriate
+  canApprovePullRequests: true
+  # Always run all provided checkCommands after edits (lint/tests etc.)
+  forceAllCheckCommands: true
