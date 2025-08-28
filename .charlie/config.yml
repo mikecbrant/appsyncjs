@@ -15,7 +15,7 @@ checkCommands:
   fix: pnpm run fmt && pnpm run lint
 
   # Lint in check mode (no writes)
-  lint: pnpm run lint:check
+  lint: pnpm run fmt:check && pnpm run lint:check
 
   # TypeScript verification (leverages package builds which run `tsc`)
   types: pnpm run build
