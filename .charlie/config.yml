@@ -1,0 +1,12 @@
+checkCommands:
+  # Apply automatic fixes: format (Prettier) and ESLint --fix across workspaces
+  fix: pnpm run fmt && pnpm run lint
+
+  # Lint in check mode (no writes)
+  lint: pnpm run lint:check
+
+  # Run tests via the root script (includes build + lint + per‑package tests)
+  test: pnpm run test
+
+  # Optional: build packages (TypeScript compile) — used by Charlie when a build step is explicitly requested
+  build: pnpm run build
