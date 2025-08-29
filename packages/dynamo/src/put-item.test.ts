@@ -18,18 +18,21 @@ describe('putItem', () => {
 		util = mock.util;
 	});
 
-	it('works with key and item only', () => {
+	it('builds UpdateItem with SET expression and ALL_NEW when given key and item', () => {
 		const key = { id: '123' };
 		const item = { id: '123', name: 'Alice' };
 		const request = putItem({ key, item });
 
 		expect(util.dynamodb.toMapValues).toBeCalledWith(key);
-		expect(util.dynamodb.toMapValues).toBeCalledWith(item);
-		expect(request).toEqual({
-			operation: 'PutItem',
-			key: { id: { S: '123' } },
-			attributeValues: { id: { S: '123' }, name: { S: 'Alice' } },
+		expect(util.dynamodb.toMapValues).toBeCalledWith({
+			':id': '123',
+			':name': 'Alice',
 		});
+		expect(request.operation).toBe('UpdateItem');
+		expect(request.key).toEqual({ id: { S: '123' } });
+		expect(request.update).toBeDefined();
+		expect(request.update!.expression).toMatch(/^SET /);
+		expect(request.returnValues).toBe('ALL_NEW');
 	});
 
 	it('supports optional condition', () => {
@@ -38,7 +41,6 @@ describe('putItem', () => {
 		const condition = {
 			expression: 'attribute_not_exists(#id)',
 			expressionNames: { '#id': 'id' },
-			// values not needed for this expression but include to exercise typing/shape
 			expressionValues: undefined,
 			equalsIgnore: ['version'],
 			consistentRead: true,
@@ -47,12 +49,9 @@ describe('putItem', () => {
 
 		const request = putItem({ key, item, condition });
 
-		expect(request).toEqual({
-			operation: 'PutItem',
-			key: { id: { S: '123' } },
-			attributeValues: { id: { S: '123' }, name: { S: 'Bob' } },
-			condition,
-		});
+		expect(request.operation).toBe('UpdateItem');
+		expect(request.key).toEqual({ id: { S: '123' } });
+		expect(request.condition).toEqual(condition);
 	});
 
 	it('propagates errors from util when mapping values', () => {

@@ -49,7 +49,7 @@
 		"uuid": "^9.0.1"
 	},
 	"devDependencies": {
-		"@aws-appsync/utils": "^1.12.0",
+		"@aws-appsync/utils": "2.0.3",
 		"@aws-sdk/client-appsync": "^3.876.0",
 		"@mikecbrant/appsyncjs-cli": "^1.0.2",
 		"@types/node": "^24.3.0",

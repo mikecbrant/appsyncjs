@@ -1,0 +1,34 @@
+scalar AWSDateTime
+
+"""
+An entity record
+"""
+type __ENTITY__ {
+	id: ID!
+	createdAt: AWSDateTime
+	updatedAt: AWSDateTime
+}
+
+input Upsert__ENTITY__Input {
+	id: ID!
+}
+
+input Update__ENTITY__Input {
+	id: ID!
+}
+
+input Delete__ENTITY__Input {
+	id: ID!
+	returnDeleted: Boolean
+}
+
+type Query {
+	get__ENTITY__(id: ID!): __ENTITY__
+}
+
+type Mutation {
+	# Upsert creates or replaces the entire record
+	upsert__ENTITY__(input: Upsert__ENTITY__Input!): __ENTITY__
+	update__ENTITY__(input: Update__ENTITY__Input!): __ENTITY__
+	delete__ENTITY__(input: Delete__ENTITY__Input!): __ENTITY__
+}

@@ -49,8 +49,8 @@ importers:
         version: 10.4.5
     devDependencies:
       '@aws-appsync/utils':
-        specifier: ^1.12.0
-        version: 1.12.0
+        specifier: 2.0.3
+        version: 2.0.3
       '@vitest/coverage-v8':
         specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.4(@types/node@24.3.0))
@@ -73,14 +73,16 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@24.3.0)
 
+  packages/create-appsyncjs: {}
+
   packages/dynamo:
     devDependencies:
       '@aws-appsync/eslint-plugin':
         specifier: ^2.0.2
         version: 2.0.2(eslint@8.57.1)(prettier@3.6.2)(typescript@5.9.2)
       '@aws-appsync/utils':
-        specifier: ^1.12.0
-        version: 1.12.0
+        specifier: 2.0.3
+        version: 2.0.3
       '@mikecbrant/appsyncjs-test-utils':
         specifier: workspace:*
         version: link:../test-utils
@@ -122,14 +124,14 @@ importers:
         version: 9.0.1
     devDependencies:
       '@aws-appsync/utils':
-        specifier: ^1.12.0
-        version: 1.12.0
+        specifier: 2.0.3
+        version: 2.0.3
       '@aws-sdk/client-appsync':
         specifier: ^3.876.0
         version: 3.876.0
       '@mikecbrant/appsyncjs-cli':
         specifier: ^1.0.2
-        version: 1.0.2(@aws-appsync/utils@1.12.0)
+        version: 1.0.2(@aws-appsync/utils@2.0.3)
       '@types/node':
         specifier: ^24.3.0
         version: 24.3.0
@@ -176,8 +178,8 @@ packages:
       eslint: ^8.57.0 || ^9.0.0
       typescript: ^3.9.6 || ^4.0.0 || ^5.0.0
 
-  '@aws-appsync/utils@1.12.0':
-    resolution: {integrity: sha512-86y7lpP1Z605crpEyLKi82bYzX4KJVtnD5W4DQl15fKY44MMEEjDxLqJvE87YFW+K9+IXdr8pDp78wxSjLai0A==}
+  '@aws-appsync/utils@2.0.3':
+    resolution: {integrity: sha512-JWzpKMfCAwphcM9ZOrISl6SAE/o2y5IphqNIwPwdolr6EBDlufMAe11CQh3kw3ryoXavgh5K+JvFe3OUWaoZHQ==}
 
   '@aws-crypto/sha256-browser@5.2.0':
     resolution: {integrity: sha512-AXfN/lGotSQwu6HNcEsIASo7kWXZ5HYWvfOmSNKDsEqC4OashTp8alTmaz+F7TC2L083SFv5RdB+qU3Vs1kZqw==}
@@ -2649,7 +2651,7 @@ snapshots:
       - prettier
       - supports-color
 
-  '@aws-appsync/utils@1.12.0': {}
+  '@aws-appsync/utils@2.0.3': {}
 
   '@aws-crypto/sha256-browser@5.2.0':
     dependencies:
@@ -3394,9 +3396,9 @@ snapshots:
       globby: 11.1.0
       read-yaml-file: 1.1.0
 
-  '@mikecbrant/appsyncjs-cli@1.0.2(@aws-appsync/utils@1.12.0)':
+  '@mikecbrant/appsyncjs-cli@1.0.2(@aws-appsync/utils@2.0.3)':
     dependencies:
-      '@aws-appsync/utils': 1.12.0
+      '@aws-appsync/utils': 2.0.3
       commander: 12.1.0
       esbuild: 0.25.9
       glob: 10.4.5
