@@ -27,7 +27,6 @@ export default {
 		// GraphQL API (AppSync, JS runtime resolvers)
 		const api = new sst.aws.AppSync('Api', {
 			schema: 'graphql/schema.graphql',
-			transform: { api: { authenticationType: 'API_KEY' } },
 		});
 
 		// Add DynamoDB as a data source
