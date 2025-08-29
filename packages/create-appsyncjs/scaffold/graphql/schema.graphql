@@ -1,34 +1,33 @@
 scalar AWSDateTime
 
 """
-A user account
+An entity record
 """
-type User {
+type __ENTITY__ {
 	id: ID!
-	email: String!
-	name: String!
 	createdAt: AWSDateTime
 	updatedAt: AWSDateTime
 }
 
 type Query {
-	getUser(id: ID!): User
+	get__ENTITY__(id: ID!): __ENTITY__
 }
 
-input PutUserInput {
+input Put__ENTITY__Input {
 	id: ID!
-	email: String!
-	name: String!
 }
 
-input UpdateUserInput {
+input Update__ENTITY__Input {
 	id: ID!
-	email: String
-	name: String
+}
+
+input Delete__ENTITY__Input {
+	id: ID!
+	returnDeleted: Boolean
 }
 
 type Mutation {
-	putUser(input: PutUserInput!): User
-	updateUser(input: UpdateUserInput!): User
-	deleteUser(id: ID!): User
+	put__ENTITY__(input: Put__ENTITY__Input!): __ENTITY__
+	update__ENTITY__(input: Update__ENTITY__Input!): __ENTITY__
+	delete__ENTITY__(input: Delete__ENTITY__Input!): __ENTITY__
 }

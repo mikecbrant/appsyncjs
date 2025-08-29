@@ -1,7 +1,8 @@
 import {
-	type ConditionCheckExpression,
-	type DynamoDBPutItemRequest,
 	util,
+	type ConditionCheckExpression,
+	type DynamoDBExpression,
+	type DynamoDBUpdateItemRequest,
 } from '@aws-appsync/utils';
 import type { DynamoKey } from './types.js';
 
@@ -11,13 +12,32 @@ export type PutItemProps = {
 	condition?: ConditionCheckExpression;
 };
 
-const putItem = (props: PutItemProps): DynamoDBPutItemRequest => {
+const putItem = (props: PutItemProps): DynamoDBUpdateItemRequest => {
 	const { key, item, condition } = props;
 
-	const request: DynamoDBPutItemRequest = {
-		operation: 'PutItem',
+	// Model Put as Update so the runtime returns the updated item in the response
+	const names: Record<string, string> = {};
+	const values: Record<string, unknown> = {};
+	const sets: string[] = [];
+
+	for (const [attr, val] of Object.entries(item)) {
+		const nameKey = `#${attr}`;
+		const valueKey = `:${attr}`;
+		names[nameKey] = attr;
+		values[valueKey] = val;
+		sets.push(`${nameKey} = ${valueKey}`);
+	}
+
+	const update: DynamoDBExpression = {
+		expression: `SET ${sets.join(', ')}`,
+		expressionNames: names,
+		expressionValues: util.dynamodb.toMapValues(values as any),
+	};
+
+	const request: DynamoDBUpdateItemRequest = {
+		operation: 'UpdateItem',
 		key: util.dynamodb.toMapValues(key),
-		attributeValues: util.dynamodb.toMapValues(item),
+		update,
 	};
 
 	if (condition) request.condition = condition;

@@ -4,15 +4,15 @@ import type {
 	DynamoDBGetItemRequest,
 } from '@aws-appsync/utils';
 
-type GetUserArgs = { id: string };
+type GetArgs = { id: string };
 
 export function request(
-	ctx: AppSyncResolverEvent<GetUserArgs>,
+	ctx: AppSyncResolverEvent<GetArgs>,
 ): DynamoDBGetItemRequest {
 	const { id } = ctx.args;
 	return getItem({ key: { pk: id } });
 }
 
-export function response(ctx: AppSyncResolverEvent<GetUserArgs>) {
-	return ctx.result;
+export function response(ctx: AppSyncResolverEvent<GetArgs>) {
+	return ctx.result ?? null;
 }

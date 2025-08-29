@@ -20,10 +20,11 @@ function substitute(content, vars) {
 	return content
 		.replaceAll('__APP_NAME__', vars.APP_NAME)
 		.replaceAll('__REGION__', vars.REGION)
-		.replaceAll('__USER_TABLE_NAME__', vars.USER_TABLE_NAME)
+		.replaceAll('__ENTITY__', vars.ENTITY)
+		.replaceAll('__TABLE_NAME__', vars.TABLE_NAME)
 		.replaceAll('__DYNAMO_VERSION__', vars.DYNAMO_VERSION)
 		.replaceAll('__TEST_UTILS_VERSION__', vars.TEST_UTILS_VERSION)
-		.replaceAll('__AUTH_MODE__', vars.AUTH_MODE);
+		.replaceAll('__DESCRIPTION__', vars.DESCRIPTION);
 }
 
 async function copyDir(srcDir, destDir, vars) {

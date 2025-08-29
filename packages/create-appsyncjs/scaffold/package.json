@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
-	"description": "SST AppSync + DynamoDB starter with User CRUD using @mikecbrant/appsyncjs-dynamo",
+	"description": "__DESCRIPTION__",
 	"scripts": {
 		"build:resolvers": "appsyncjs build -o appsync -i 'src/resolvers/**/*.ts'",
 		"deploy": "sst deploy",

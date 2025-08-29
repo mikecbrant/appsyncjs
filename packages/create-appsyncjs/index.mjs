@@ -1,14 +1,26 @@
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import readline from 'node:readline/promises';
+import { stdin as input, stdout as output } from 'node:process';
 import { generate } from './lib/generate.mjs';
 
-export async function create({ templateDir, dest, auth = 'none' }) {
-	const ctx = await buildContext({ templateDir, dest, auth });
+export async function create({ templateDir, dest, entity, description }) {
+	const ctx = await buildContext({ templateDir, dest, entity, description });
 	await generate(ctx);
 }
 
-async function buildContext({ templateDir, dest, auth }) {
+async function promptFor(question, defaultValue) {
+	const rl = readline.createInterface({ input, output });
+	try {
+		const ans = (await rl.question(`${question} ${defaultValue ? `(${defaultValue}) ` : ''}`)).trim();
+		return ans || defaultValue;
+	} finally {
+		rl.close();
+	}
+}
+
+async function buildContext({ templateDir, dest, entity, description }) {
 	const appName = path.basename(dest).replace(/[^a-zA-Z0-9-_]/g, '-');
 	// Pull current versions of internal packages from this repo's package.json files at publish-time.
 	// At runtime (consumer env), these values are baked into the template placeholders.
@@ -30,7 +42,17 @@ async function buildContext({ templateDir, dest, auth }) {
 		testUtilsVersion = `^${tu.version}`;
 	} catch {}
 
-	const authMode = auth === 'cognito' ? 'cognito' : 'none';
+  // Interactive prompts
+  const defaultEntity = 'User';
+  const entityInput = entity ?? (process.stdin.isTTY ? await promptFor('Entity name (singular, PascalCase)?', defaultEntity) : defaultEntity);
+  // naive pluralization (append 's') for table and potential list naming; acceptable for scaffold
+  const tableName = `${entityInput}s`;
+  const desc = description ?? (process.stdin.isTTY
+    ? await promptFor(
+        'Project description?',
+        `SST AppSync + DynamoDB starter with ${entityInput} CRUD using @mikecbrant/appsyncjs-dynamo`,
+      )
+    : `SST AppSync + DynamoDB starter with ${entityInput} CRUD using @mikecbrant/appsyncjs-dynamo`);
 
 	return {
 		templateDir,
@@ -38,10 +60,11 @@ async function buildContext({ templateDir, dest, auth }) {
 		vars: {
 			APP_NAME: appName,
 			REGION: 'us-east-1',
-			USER_TABLE_NAME: 'Users',
+			ENTITY: entityInput,
+			TABLE_NAME: tableName,
 			DYNAMO_VERSION: dynamoVersion,
 			TEST_UTILS_VERSION: testUtilsVersion,
-			AUTH_MODE: authMode,
+			DESCRIPTION: desc,
 		},
 	};
 }

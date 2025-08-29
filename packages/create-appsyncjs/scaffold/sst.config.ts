@@ -2,86 +2,58 @@
 // Docs: https://sst.dev/docs/reference/config
 import fs from 'node:fs';
 
+// Injected at generation time
+const appName = '__APP_NAME__';
+const region = '__REGION__';
+const entity = '__ENTITY__';
+const tableName = '__TABLE_NAME__';
+
 export default {
-	app(input) {
+	app(_input) {
 		return {
-			name: '__APP_NAME__',
+			name: appName,
 			providers: {
-				aws: {
-					region: '__REGION__',
-				},
+				aws: { region },
 			},
 		};
 	},
 	async run() {
-		// DynamoDB table for Users
-		const table = new sst.aws.Dynamo('__USER_TABLE_NAME__', {
+		// DynamoDB table
+		const table = new sst.aws.Dynamo(tableName, {
 			fields: { pk: 'string' },
 			primaryIndex: { hashKey: 'pk' },
 		});
 
-		// Optional Cognito baseline when requested at generation time
-		const isCognito = '__AUTH_MODE__' === 'cognito';
-		let userPool: sst.aws.CognitoUserPool | undefined;
-		if (isCognito) {
-			userPool = new sst.aws.CognitoUserPool('UserPool', {
-				passwordPolicy: {
-					minLength: 8,
-					lowercase: true,
-					uppercase: true,
-					numbers: true,
-				},
-			});
-		}
-
 		// GraphQL API (AppSync, JS runtime resolvers)
 		const api = new sst.aws.AppSync('Api', {
 			schema: 'graphql/schema.graphql',
-			// Auth mode decided at generation time
-			transform: {
-				api: isCognito
-					? {
-							authenticationType: 'AMAZON_COGNITO_USER_POOLS',
-							userPoolConfig: {
-								awsRegion: '__REGION__',
-								defaultAction: 'ALLOW',
-								userPoolId: userPool!.id,
-							} as any,
-						}
-					: {
-							authenticationType: 'API_KEY',
-						},
-			},
+			transform: { api: { authenticationType: 'API_KEY' } },
 		});
 
 		// Add DynamoDB as a data source
-		const dynamoDS = api.addDataSource({ name: 'users', dynamodb: table.arn });
+		const dynamoDS = api.addDataSource({ name: entity, dynamodb: table.arn });
 
 		// Helper to load compiled JS resolver code (APPSYNC_JS)
 		const code = (file: string) => fs.readFileSync(file, 'utf8');
 
 		// Attach resolvers (unit resolvers with JS runtime)
-		api.addResolver('Query getUser', {
+		api.addResolver('Query get__ENTITY__', {
 			dataSource: dynamoDS.name,
-			code: code('appsync/Query.getUser.mjs'),
+			code: code('appsync/get.mjs'),
 		});
-		api.addResolver('Mutation putUser', {
+		api.addResolver('Mutation put__ENTITY__', {
 			dataSource: dynamoDS.name,
-			code: code('appsync/Mutation.putUser.mjs'),
+			code: code('appsync/put.mjs'),
 		});
-		api.addResolver('Mutation updateUser', {
+		api.addResolver('Mutation update__ENTITY__', {
 			dataSource: dynamoDS.name,
-			code: code('appsync/Mutation.updateUser.mjs'),
+			code: code('appsync/update.mjs'),
 		});
-		api.addResolver('Mutation deleteUser', {
+		api.addResolver('Mutation delete__ENTITY__', {
 			dataSource: dynamoDS.name,
-			code: code('appsync/Mutation.deleteUser.mjs'),
+			code: code('appsync/delete.mjs'),
 		});
 
-		return {
-			apiUrl: api.url,
-			tableName: table.name,
-			userPoolArn: userPool?.arn,
-		};
+		return { apiUrl: api.url, tableName: table.name };
 	},
 };

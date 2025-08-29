@@ -5,21 +5,19 @@ import fs from 'node:fs/promises';
 import { create } from './index.mjs';
 
 function parseArgs(argv) {
-	const args = { dir: undefined, auth: 'none' };
+	const args = { dir: undefined, entity: undefined, description: undefined };
 	for (let i = 2; i < argv.length; i++) {
 		const a = argv[i];
-		if (a === '--auth' || a === '-a') {
-			const val = argv[i + 1];
-			if (!val || val.startsWith('-')) {
-				console.error('Missing value for --auth. Use "none" or "cognito".');
-				process.exit(1);
-			}
-			if (!['none', 'cognito'].includes(val)) {
-				console.error('Invalid --auth value. Use "none" or "cognito".');
-				process.exit(1);
-			}
-			args.auth = val;
-			i++;
+		if ((a === '--entity' || a === '-e') && argv[i + 1] && !argv[i + 1].startsWith('-')) {
+			args.entity = argv[++i];
+			continue;
+		}
+		if (
+			(a === '--description' || a === '-d') &&
+			argv[i + 1] &&
+			!argv[i + 1].startsWith('-')
+		) {
+			args.description = argv[++i];
 			continue;
 		}
 		if (!args.dir) args.dir = a;
@@ -52,7 +50,7 @@ async function main() {
 		// ignore
 	}
 
-	await create({ templateDir, dest, auth: parsed.auth });
+	await create({ templateDir, dest, entity: parsed.entity, description: parsed.description });
 	console.log(`✔ Created scaffold in ${dest}`);
 	console.log('\nNext steps:');
 	console.log(`  1. cd ${path.relative(cwd, dest)}`);
