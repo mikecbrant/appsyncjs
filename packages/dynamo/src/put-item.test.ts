@@ -29,7 +29,7 @@ describe('putItem', () => {
 		expect(request.key).toEqual({ id: { S: '123' } });
 		expect(request.update).toBeDefined();
 		expect(request.update!.expression).toMatch(/^SET /);
-		// UpdateItem typically returns the updated attributes by default in AppSync runtime
+		expect(request.returnValues).toBe('ALL_NEW');
 	});
 
 	it('supports optional condition', () => {

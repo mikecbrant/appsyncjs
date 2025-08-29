@@ -39,19 +39,19 @@ export default {
 		// Attach resolvers (unit resolvers with JS runtime)
 		api.addResolver('Query get__ENTITY__', {
 			dataSource: dynamoDS.name,
-			code: code('appsync/get.mjs'),
+			code: code('appsync/src/resolvers/get.js'),
 		});
 		api.addResolver('Mutation put__ENTITY__', {
 			dataSource: dynamoDS.name,
-			code: code('appsync/put.mjs'),
+			code: code('appsync/src/resolvers/put.js'),
 		});
 		api.addResolver('Mutation update__ENTITY__', {
 			dataSource: dynamoDS.name,
-			code: code('appsync/update.mjs'),
+			code: code('appsync/src/resolvers/update.js'),
 		});
 		api.addResolver('Mutation delete__ENTITY__', {
 			dataSource: dynamoDS.name,
-			code: code('appsync/delete.mjs'),
+			code: code('appsync/src/resolvers/delete.js'),
 		});
 
 		return { apiUrl: api.url, tableName: table.name };

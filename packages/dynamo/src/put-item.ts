@@ -34,10 +34,11 @@ const putItem = (props: PutItemProps): DynamoDBUpdateItemRequest => {
 		expressionValues: util.dynamodb.toMapValues(values as any),
 	};
 
-	const request: DynamoDBUpdateItemRequest = {
+	const request: DynamoDBUpdateItemRequest & { returnValues: 'ALL_NEW' } = {
 		operation: 'UpdateItem',
 		key: util.dynamodb.toMapValues(key),
 		update,
+		returnValues: 'ALL_NEW',
 	};
 
 	if (condition) request.condition = condition;
