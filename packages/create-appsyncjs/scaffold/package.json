@@ -9,7 +9,7 @@
 		"deploy": "sst deploy",
 		"remove": "sst remove",
 		"dev": "sst dev",
-		"test": "sst load-config -- vitest run"
+		"test": "sst load-config -- vitest run --coverage"
 	},
 	"dependencies": {
 		"@mikecbrant/appsyncjs-dynamo": "__DYNAMO_VERSION__"

@@ -20,8 +20,16 @@ describe('__ENTITY__ resolvers', () => {
 		expect(actual).toStrictEqual(expected);
 	});
 
-	it('put.request builds an UpdateItem request that writes base fields', async () => {
-		const mod = await import('./put.ts');
+	it('get.response returns the fetched entity or null', async () => {
+		const mod = await import('./get.ts');
+		const ctxOk = { result: { id: 'e-1' } } as unknown as AppSyncResolverEvent<any>;
+		expect(mod.response(ctxOk)).toStrictEqual({ id: 'e-1' });
+		const ctxNull = { result: null } as unknown as AppSyncResolverEvent<any>;
+		expect(mod.response(ctxNull)).toBeNull();
+	});
+
+	it('upsert.request builds an UpdateItem request that writes base fields', async () => {
+		const mod = await import('./upsert.ts');
 		const input = { id: 'e-123' };
 		const ctx = { args: { input } } as unknown as AppSyncResolverEvent<{
 			input: typeof input;
@@ -35,6 +43,12 @@ describe('__ENTITY__ resolvers', () => {
 		);
 		expect(actual.update).toBeDefined();
 		expect(actual.update!.expression).toMatch(/^SET /);
+	});
+
+	it('upsert.response returns the stored entity', async () => {
+		const mod = await import('./upsert.ts');
+		const ctx = { result: { attributes: { id: 'e-1', createdAt: 't', updatedAt: 't' } } } as unknown as AppSyncResolverEvent<any>;
+		expect(mod.response(ctx)).toStrictEqual({ id: 'e-1', createdAt: 't', updatedAt: 't' });
 	});
 
 	it('update.request builds an UpdateItem request that sets updatedAt and returns ALL_NEW', async () => {
@@ -61,6 +75,12 @@ describe('__ENTITY__ resolvers', () => {
 		expect(actual.update.expression).toMatch(/SET/);
 	});
 
+	it('update.response returns ALL_NEW attributes', async () => {
+		const mod = await import('./update.ts');
+		const ctx = { result: { attributes: { id: 'e-1', updatedAt: 't' } } } as unknown as AppSyncResolverEvent<any>;
+		expect(mod.response(ctx)).toStrictEqual({ id: 'e-1', updatedAt: 't' });
+	});
+
 	it('delete.request builds a valid DeleteItem request with input wrapper + returnDeleted', async () => {
 		const mod = await import('./delete.ts');
 		const ctx = {
@@ -74,5 +94,14 @@ describe('__ENTITY__ resolvers', () => {
 			returnDeleted: true,
 		});
 		expect(actual).toStrictEqual(expected);
+	});
+
+	it('delete.response returns deleted attributes when requested', async () => {
+		const mod = await import('./delete.ts');
+		const ctx = {
+			args: { input: { id: 'e-1', returnDeleted: true } },
+			result: { attributes: { id: 'e-1' } },
+		} as unknown as AppSyncResolverEvent<any>;
+		expect(mod.response(ctx)).toStrictEqual({ id: 'e-1' });
 	});
 });

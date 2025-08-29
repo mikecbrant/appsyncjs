@@ -1,7 +1,6 @@
 node_modules
 appsync
 .sst
-cdk.out
 coverage
 .vscode
 .DS_Store

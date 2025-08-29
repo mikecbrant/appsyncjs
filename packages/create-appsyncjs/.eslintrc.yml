@@ -1,0 +1,20 @@
+extends:
+  - ../../.eslintrc.yml
+
+rules:
+  # Prefer function expressions (arrow or const fn) over declarations
+  func-style: [error, expression]
+
+  # Enforce import sorting/alphabetization
+  import/order:
+    - error
+    - groups: [[builtin, external], internal, parent, sibling, index, object, type]
+      alphabetize:
+        order: asc
+        caseInsensitive: true
+
+  # Prefer promise .catch over try/catch in this package
+  no-restricted-syntax:
+    - error
+    - selector: TryStatement
+      message: Use promise .catch() instead of try/catch for async flows in generator code.

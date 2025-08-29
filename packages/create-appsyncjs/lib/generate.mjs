@@ -27,7 +27,7 @@ function substitute(content, vars) {
 		.replaceAll('__DESCRIPTION__', vars.DESCRIPTION);
 }
 
-async function copyDir(srcDir, destDir, vars) {
+const copyDir = async (srcDir, destDir, vars) => {
 	await fs.mkdir(destDir, { recursive: true });
 	const entries = await fs.readdir(srcDir, { withFileTypes: true });
 	for (const entry of entries) {
@@ -51,10 +51,10 @@ async function copyDir(srcDir, destDir, vars) {
 			await fs.writeFile(destPath, buf);
 		}
 	}
-}
+};
 
-export async function generate(ctx) {
+const generate = async (ctx) => {
 	await copyDir(ctx.templateDir, ctx.dest, ctx.vars);
-}
+};
 
-export default { generate };
+export { generate };

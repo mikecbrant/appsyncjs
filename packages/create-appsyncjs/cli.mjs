@@ -1,10 +1,11 @@
 #! /usr/bin/env node
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { create } from './index.mjs';
 
-function parseArgs(argv) {
+const parseArgs = (argv) => {
 	const args = { dir: undefined, entity: undefined, description: undefined };
 	for (let i = 2; i < argv.length; i++) {
 		const a = argv[i];
@@ -27,9 +28,9 @@ function parseArgs(argv) {
 		if (!args.dir) args.dir = a;
 	}
 	return args;
-}
+};
 
-async function main() {
+const main = async () => {
 	const parsed = parseArgs(process.argv);
 	const targetDir = parsed.dir || 'appsyncjs-app';
 	const cwd = process.cwd();
@@ -39,20 +40,28 @@ async function main() {
 	const templateDir = path.resolve(__dirname, 'scaffold');
 
 	// Basic guard: don't overwrite non-empty directories
-	try {
-		const stat = await fs.stat(dest).catch(() => null);
-		if (stat) {
-			const files = await fs.readdir(dest);
+	await fs
+		.stat(dest)
+		.then(async () => {
+			// Directory exists — check if it's empty
+			const files = await fs.readdir(dest).catch((err) => {
+				console.error('Error reading target directory contents:', err);
+				throw err;
+			});
 			if (files.length > 0) {
 				console.error(
 					`Target directory already exists and is not empty: ${dest}`,
 				);
 				process.exit(1);
 			}
-		}
-	} catch (err) {
-		// ignore
-	}
+		})
+		.catch((err) => {
+			// Ignore missing directory; log and exit on other errors
+			if (err && err.code !== 'ENOENT') {
+				console.error('Error checking target directory:', err);
+				process.exit(1);
+			}
+		});
 
 	await create({
 		templateDir,
@@ -67,7 +76,7 @@ async function main() {
 	console.log('  3. pnpm build:resolvers');
 	console.log('  4. pnpm test');
 	console.log('  5. pnpm deploy  # requires AWS credentials configured');
-}
+};
 
 main().catch((err) => {
 	console.error(err);

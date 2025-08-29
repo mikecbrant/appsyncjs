@@ -41,9 +41,9 @@ export default {
 			dataSource: dynamoDS.name,
 			code: code('appsync/src/resolvers/get.js'),
 		});
-		api.addResolver('Mutation put__ENTITY__', {
+		api.addResolver('Mutation upsert__ENTITY__', {
 			dataSource: dynamoDS.name,
-			code: code('appsync/src/resolvers/put.js'),
+			code: code('appsync/src/resolvers/upsert.js'),
 		});
 		api.addResolver('Mutation update__ENTITY__', {
 			dataSource: dynamoDS.name,
