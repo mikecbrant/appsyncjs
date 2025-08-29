@@ -8,7 +8,11 @@ function parseArgs(argv) {
 	const args = { dir: undefined, entity: undefined, description: undefined };
 	for (let i = 2; i < argv.length; i++) {
 		const a = argv[i];
-		if ((a === '--entity' || a === '-e') && argv[i + 1] && !argv[i + 1].startsWith('-')) {
+		if (
+			(a === '--entity' || a === '-e') &&
+			argv[i + 1] &&
+			!argv[i + 1].startsWith('-')
+		) {
 			args.entity = argv[++i];
 			continue;
 		}
@@ -50,7 +54,12 @@ async function main() {
 		// ignore
 	}
 
-	await create({ templateDir, dest, entity: parsed.entity, description: parsed.description });
+	await create({
+		templateDir,
+		dest,
+		entity: parsed.entity,
+		description: parsed.description,
+	});
 	console.log(`✔ Created scaffold in ${dest}`);
 	console.log('\nNext steps:');
 	console.log(`  1. cd ${path.relative(cwd, dest)}`);

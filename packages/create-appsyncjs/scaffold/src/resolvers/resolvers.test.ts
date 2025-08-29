@@ -30,7 +30,8 @@ describe('__ENTITY__ resolvers', () => {
 		// putItem now returns an UpdateItem with SET expression over provided fields
 		expect(actual.operation).toBe('UpdateItem');
 		expect(actual.key).toStrictEqual(
-			dynamo.putItem({ key: { pk: 'e-123' }, item: expect.any(Object) as any }).key,
+			dynamo.putItem({ key: { pk: 'e-123' }, item: expect.any(Object) as any })
+				.key,
 		);
 		expect(actual.update).toBeDefined();
 		expect(actual.update!.expression).toMatch(/^SET /);

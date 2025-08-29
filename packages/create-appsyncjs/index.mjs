@@ -13,7 +13,11 @@ export async function create({ templateDir, dest, entity, description }) {
 async function promptFor(question, defaultValue) {
 	const rl = readline.createInterface({ input, output });
 	try {
-		const ans = (await rl.question(`${question} ${defaultValue ? `(${defaultValue}) ` : ''}`)).trim();
+		const ans = (
+			await rl.question(
+				`${question} ${defaultValue ? `(${defaultValue}) ` : ''}`,
+			)
+		).trim();
 		return ans || defaultValue;
 	} finally {
 		rl.close();
@@ -42,17 +46,23 @@ async function buildContext({ templateDir, dest, entity, description }) {
 		testUtilsVersion = `^${tu.version}`;
 	} catch {}
 
-  // Interactive prompts
-  const defaultEntity = 'User';
-  const entityInput = entity ?? (process.stdin.isTTY ? await promptFor('Entity name (singular, PascalCase)?', defaultEntity) : defaultEntity);
-  // naive pluralization (append 's') for table and potential list naming; acceptable for scaffold
-  const tableName = `${entityInput}s`;
-  const desc = description ?? (process.stdin.isTTY
-    ? await promptFor(
-        'Project description?',
-        `SST AppSync + DynamoDB starter with ${entityInput} CRUD using @mikecbrant/appsyncjs-dynamo`,
-      )
-    : `SST AppSync + DynamoDB starter with ${entityInput} CRUD using @mikecbrant/appsyncjs-dynamo`);
+	// Interactive prompts
+	const defaultEntity = 'User';
+	const entityInput =
+		entity ??
+		(process.stdin.isTTY
+			? await promptFor('Entity name (singular, PascalCase)?', defaultEntity)
+			: defaultEntity);
+	// naive pluralization (append 's') for table and potential list naming; acceptable for scaffold
+	const tableName = `${entityInput}s`;
+	const desc =
+		description ??
+		(process.stdin.isTTY
+			? await promptFor(
+					'Project description?',
+					`SST AppSync + DynamoDB starter with ${entityInput} CRUD using @mikecbrant/appsyncjs-dynamo`,
+				)
+			: `SST AppSync + DynamoDB starter with ${entityInput} CRUD using @mikecbrant/appsyncjs-dynamo`);
 
 	return {
 		templateDir,

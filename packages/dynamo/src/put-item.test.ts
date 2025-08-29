@@ -24,7 +24,10 @@ describe('putItem', () => {
 		const request = putItem({ key, item });
 
 		expect(util.dynamodb.toMapValues).toBeCalledWith(key);
-		expect(util.dynamodb.toMapValues).toBeCalledWith({ ':id': '123', ':name': 'Alice' });
+		expect(util.dynamodb.toMapValues).toBeCalledWith({
+			':id': '123',
+			':name': 'Alice',
+		});
 		expect(request.operation).toBe('UpdateItem');
 		expect(request.key).toEqual({ id: { S: '123' } });
 		expect(request.update).toBeDefined();
