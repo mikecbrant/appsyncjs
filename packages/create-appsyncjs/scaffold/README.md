@@ -1,6 +1,6 @@
 # **APP_NAME**
 
-__DESCRIPTION__
+**DESCRIPTION**
 
 ## Quickstart
 
