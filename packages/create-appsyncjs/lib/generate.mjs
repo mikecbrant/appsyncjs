@@ -22,8 +22,6 @@ function substitute(content, vars) {
 		.replaceAll('__REGION__', vars.REGION)
 		.replaceAll('__ENTITY__', vars.ENTITY)
 		.replaceAll('__TABLE_NAME__', vars.TABLE_NAME)
-		.replaceAll('__DYNAMO_VERSION__', vars.DYNAMO_VERSION)
-		.replaceAll('__TEST_UTILS_VERSION__', vars.TEST_UTILS_VERSION)
 		.replaceAll('__DESCRIPTION__', vars.DESCRIPTION);
 }
 

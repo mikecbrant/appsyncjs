@@ -1,8 +1,7 @@
-import fs from 'node:fs/promises';
+import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { stdin as input, stdout as output } from 'node:process';
 import readline from 'node:readline/promises';
-import { fileURLToPath } from 'node:url';
 
 import { generate } from './lib/generate.mjs';
 
@@ -20,29 +19,6 @@ const promptFor = async (question, defaultValue) => {
 
 const buildContext = async ({ templateDir, dest, entity, description }) => {
 	const appName = path.basename(dest).replace(/[^a-zA-Z0-9-_]/g, '-');
-	// Pull current versions of internal packages from this repo's package.json files at publish-time.
-	// At runtime (consumer env), these values are baked into the template placeholders.
-	const __dirname = path.dirname(fileURLToPath(import.meta.url));
-	const repoRoot = path.resolve(__dirname, '../../');
-	const readJSON = async (p) => JSON.parse(await fs.readFile(p, 'utf8'));
-	let dynamoVersion = '^0.3.0';
-	let testUtilsVersion = '^1.2.4';
-
-	await readJSON(path.resolve(repoRoot, 'packages/dynamo/package.json'))
-		.then((dyn) => {
-			dynamoVersion = `^${dyn.version}`;
-		})
-		.catch((err) => {
-			console.error('Failed to read Dynamo package version:', err);
-		});
-
-	await readJSON(path.resolve(repoRoot, 'packages/test-utils/package.json'))
-		.then((tu) => {
-			testUtilsVersion = `^${tu.version}`;
-		})
-		.catch((err) => {
-			console.error('Failed to read test-utils package version:', err);
-		});
 
 	// Interactive prompts
 	const defaultEntity = 'User';
@@ -70,8 +46,6 @@ const buildContext = async ({ templateDir, dest, entity, description }) => {
 			REGION: 'us-east-1',
 			ENTITY: entityInput,
 			TABLE_NAME: tableName,
-			DYNAMO_VERSION: dynamoVersion,
-			TEST_UTILS_VERSION: testUtilsVersion,
 			DESCRIPTION: desc,
 		},
 	};
@@ -80,6 +54,30 @@ const buildContext = async ({ templateDir, dest, entity, description }) => {
 const create = async ({ templateDir, dest, entity, description }) => {
 	const ctx = await buildContext({ templateDir, dest, entity, description });
 	await generate(ctx);
+
+	// Post-scaffold: upgrade deps to latest in the generated project
+	await new Promise((resolve) => {
+		const child = spawn('pnpm', ['up', '--latest'], {
+			cwd: ctx.dest,
+			stdio: 'inherit',
+		});
+		child.on('close', (code, signal) => {
+			if (code !== 0) {
+				console.warn(
+					`'pnpm up --latest' exited with code ${code}${signal ? ` (signal: ${signal})` : ''}. You can re-run it manually in: ${ctx.dest}`,
+				);
+			}
+			resolve();
+		});
+		child.on('error', (err) => {
+			console.warn(
+				"Couldn't run 'pnpm up --latest' automatically. You can run it manually in the project directory.",
+				err,
+			);
+			resolve();
+		});
+	});
 };
 
+export default { create };
 export { create };

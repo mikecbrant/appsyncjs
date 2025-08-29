@@ -51,8 +51,16 @@ pnpm deploy  # requires AWS credentials
 
 ## Programmatic API
 
+You can import either the named `create` export or the default export object.
+
 ```js
+// Named export
 import { create } from '@mikecbrant/create-appsyncjs';
+
+// Default export (object with `create`)
+// import createApp from '@mikecbrant/create-appsyncjs';
+// const { create } = createApp;
+
 await create({
 	templateDir: '/path/to/pkg/scaffold',
 	dest: './my-app',
@@ -68,4 +76,4 @@ await create({
 - Testing/tooling: Vitest; scripts align with `create-sst` (`sst load-config -- vitest run`)
 - Authentication: default is an API key (no user pool).
 
-The scaffold keeps dependencies current at generation time and pins `@mikecbrant/appsyncjs-*` to the latest versions available when you run the generator.
+Dependency strategy: the scaffold template includes hard-coded baseline versions for internal packages. Immediately after files are generated, the generator runs `pnpm up --latest` in the new project directory to bump all dependencies to their latest versions (including potential major releases). If this step fails (for example, if `pnpm` isn’t installed), you can run it manually later.
