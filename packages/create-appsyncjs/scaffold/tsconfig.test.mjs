@@ -8,5 +8,5 @@ export default {
 		types: ['vitest/importMeta', 'vitest'],
 	},
 	include: ['src/**/*.test.ts'],
-	exclude: ['node_modules', 'appsync', 'dist'],
+	exclude: ['node_modules', 'build', 'coverage'],
 };

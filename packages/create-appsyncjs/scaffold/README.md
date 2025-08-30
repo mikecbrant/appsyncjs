@@ -25,5 +25,11 @@ pnpm deploy  # requires AWS credentials
 - Node.js >= 22 is required.
 - Default region is `__REGION__`.
 - Tests run with Vitest via `sst load-config -- vitest run`.
-- Resolvers are authored in TypeScript under `src/resolvers/**` and bundled to `appsync/` using `@mikecbrant/appsyncjs-cli`.
+- Resolvers are authored in TypeScript under `src/resolvers/**` and bundled to `build/appsync/` using `@mikecbrant/appsyncjs-cli`.
 - The bundle includes `@mikecbrant/appsyncjs-dynamo` so you can write readable request builders instead of hand-crafting expressions.
+
+## Output directories
+
+- All compiled/bundled artifacts are written to `build/` (e.g., resolver bundles in `build/appsync/`).
+- Test coverage reports are written to `coverage/`.
+- Both `build/` and `coverage/` are ignored by Git and tooling (ESLint/Prettier).

@@ -1,5 +1,5 @@
 node_modules
-appsync
+build
 .sst
 coverage
 .vscode
