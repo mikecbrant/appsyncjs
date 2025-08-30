@@ -5,7 +5,8 @@
 	"type": "module",
 	"description": "__DESCRIPTION__",
 	"scripts": {
-		"build:resolvers": "appsyncjs build -o appsync -i 'src/resolvers/**/*.ts'",
+		"build:resolvers": "appsyncjs build -o build/appsync -i 'src/resolvers/**/*.ts'",
+		"clean": "rm -rf build coverage",
 		"deploy": "sst deploy",
 		"remove": "sst remove",
 		"dev": "sst dev",

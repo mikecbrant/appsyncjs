@@ -4,6 +4,7 @@ export default defineConfig({
 	test: {
 		environment: 'node',
 		clearMocks: true,
+		exclude: ['build/**', 'coverage/**'],
 		coverage: {
 			enabled: true,
 			all: true,

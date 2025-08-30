@@ -5,7 +5,8 @@ export default {
 		moduleResolution: 'Bundler',
 		strict: true,
 		noEmit: true,
+		outDir: './build',
 	},
 	include: ['src', 'sst.config.ts', 'graphql'],
-	exclude: ['node_modules', 'appsync', 'dist', '**/*.test.ts'],
+	exclude: ['node_modules', 'build', 'coverage', '**/*.test.ts'],
 };
