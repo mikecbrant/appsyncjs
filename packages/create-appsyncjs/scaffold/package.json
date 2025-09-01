@@ -4,24 +4,22 @@
 	"private": true,
 	"type": "module",
 	"description": "__DESCRIPTION__",
+	"workspaces": [
+		"packages/*"
+	],
 	"scripts": {
-		"build:resolvers": "appsyncjs build -o build/appsync -i 'src/resolvers/**/*.ts'",
+		"build:resolvers": "pnpm -C packages/core build:resolvers",
 		"clean": "rm -rf build coverage",
 		"deploy": "sst deploy",
 		"remove": "sst remove",
 		"dev": "sst dev",
-		"test": "sst load-config -- vitest run --coverage"
-	},
-	"dependencies": {
-		"@mikecbrant/appsyncjs-dynamo": "^1.0.0"
+		"test": "pnpm -C packages/core test"
 	},
 	"devDependencies": {
-		"@aws-appsync/utils": "2.0.3",
 		"@mikecbrant/appsyncjs-cli": "^1.0.2",
-		"@mikecbrant/appsyncjs-test-utils": "^1.2.4",
+		"@tsconfig/node22": "^22.0.0",
 		"sst": "^3.1.0",
-		"typescript": "^5.9.2",
-		"vitest": "^3.2.4"
+		"typescript": "^5.9.2"
 	},
 	"engines": {
 		"node": ">=22"
