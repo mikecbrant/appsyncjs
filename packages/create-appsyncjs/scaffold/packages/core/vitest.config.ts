@@ -4,13 +4,12 @@ export default defineConfig({
 	test: {
 		environment: 'node',
 		clearMocks: true,
-		exclude: ['build/**', 'coverage/**'],
 		coverage: {
 			enabled: true,
 			all: true,
 			provider: 'v8',
 			reporter: ['text', 'json', 'html', 'text-summary'],
-			reportsDirectory: './coverage',
+			reportsDirectory: '../../coverage',
 			thresholds: {
 				branches: 100,
 				functions: 100,

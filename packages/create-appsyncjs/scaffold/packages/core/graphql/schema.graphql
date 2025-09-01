@@ -1,12 +1,13 @@
-scalar AWSDateTime
+# GraphQL schema for the scaffold
 
-"""
-An entity record
-"""
 type __ENTITY__ {
 	id: ID!
-	createdAt: AWSDateTime
-	updatedAt: AWSDateTime
+	createdAt: AWSDateTime!
+	updatedAt: AWSDateTime!
+}
+
+type Query {
+	get__ENTITY__(id: ID!): __ENTITY__
 }
 
 input Upsert__ENTITY__Input {
@@ -22,13 +23,13 @@ input Delete__ENTITY__Input {
 	returnDeleted: Boolean
 }
 
-type Query {
-	get__ENTITY__(id: ID!): __ENTITY__
-}
-
 type Mutation {
-	# Upsert creates or replaces the entire record
-	upsert__ENTITY__(input: Upsert__ENTITY__Input!): __ENTITY__
+	upsert__ENTITY__(input: Upsert__ENTITY__Input!): __ENTITY__!
 	update__ENTITY__(input: Update__ENTITY__Input!): __ENTITY__
 	delete__ENTITY__(input: Delete__ENTITY__Input!): __ENTITY__
+}
+
+schema {
+	query: Query
+	mutation: Mutation
 }

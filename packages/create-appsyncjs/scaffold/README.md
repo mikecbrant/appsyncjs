@@ -24,8 +24,9 @@ pnpm deploy  # requires AWS credentials
 
 - Node.js >= 22 is required.
 - Default region is `__REGION__`.
-- Tests run with Vitest via `sst load-config -- vitest run`.
-- Resolvers are authored in TypeScript under `src/resolvers/**` and bundled to `build/appsync/` using `@mikecbrant/appsyncjs-cli`.
+- Tests run from the `packages/core` workspace via `sst shell -- vitest run`.
+- Resolvers are authored in TypeScript under `packages/core/src/resolvers/**` and bundled to `build/appsync/` using `@mikecbrant/appsyncjs-cli`.
+- GraphQL schema lives at `packages/core/graphql/schema.graphql`.
 - The bundle includes `@mikecbrant/appsyncjs-dynamo` so you can write readable request builders instead of hand-crafting expressions.
 
 ## Output directories
