@@ -7,7 +7,7 @@ const region = '__REGION__';
 const entity = '__ENTITY__';
 const tableName = '__TABLE_NAME__';
 
-// SST v3 config — import infra modules instead of defining resources inline
+// SST v3 config - import infra modules instead of defining resources inline
 export default $config({
 	app(_input) {
 		return {
