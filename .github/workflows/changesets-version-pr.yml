@@ -15,8 +15,6 @@ concurrency:
 jobs:
   open_or_update_version_pr:
     name: Open/Update "Version Packages" PR
-    # Do not fail the caller if this flakes; a later run can retry
-    continue-on-error: true
     runs-on: ubuntu-latest
     permissions:
       contents: write
