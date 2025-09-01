@@ -44,6 +44,8 @@ jobs:
 
   determine_release:
     name: Determine release
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     outputs:
       is_prerelease: ${{ steps.determine_release.outputs.is_prerelease }}

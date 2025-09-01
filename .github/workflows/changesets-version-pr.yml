@@ -1,5 +1,10 @@
 name: Changesets — Version PR
 
+# Explicit token permissions for Changesets to open/update the Version Packages PR
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   push:
     branches:
