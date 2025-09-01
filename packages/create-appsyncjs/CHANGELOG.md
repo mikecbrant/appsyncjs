@@ -1,27 +1,13 @@
-# @mikecbrant/appsyncjs-cli
+# @mikecbrant/create-appsyncjs
 
-## 1.0.3
+## 0.2.0
 
-### Patch Changes
+### Minor Changes
 
 - ac12639: Align generator and scaffold with SST v3 (Pulumi), Node >=22, default region injection, Vitest tooling with 100% coverage thresholds in the scaffold, and strict AppSync JS resolver types. Scaffold removes authentication configuration from `sst.config.ts` (no auth by default).
 
   Monorepo adopts `@aws-appsync/utils@2.0.3` across packages. `@mikecbrant/appsyncjs-dynamo` now targets v2 types (peer requirement >=2.0.3), which is a breaking change for consumers still on v1.
 
-## 1.0.2
-
 ### Patch Changes
 
-- 0cb8c75: chore(deps): update dependency/devDependency specifiers to latest non‑major ranges. No runtime code changes.
-
-## 1.0.1
-
-### Patch Changes
-
-- e8e683b: remove test files from cli distribution
-
-## 1.0.0
-
-### Major Changes
-
-- 4921e15: Initial CLI implementation with build command
+- d672c93: scaffold: route compiled resolver outputs to `build/` and coverage reports to `coverage/`; update ignore files and `sst.config.ts` to load from `build/appsync/*.js`; add `clean` script. (APPSYNC-15)
