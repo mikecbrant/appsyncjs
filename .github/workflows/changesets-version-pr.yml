@@ -5,7 +5,9 @@ on:
     branches:
       - main
 
-concurrency: changesets-${{ github.ref }}
+concurrency:
+  group: changesets-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   open_or_update_version_pr:

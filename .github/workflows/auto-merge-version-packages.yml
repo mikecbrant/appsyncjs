@@ -1,7 +1,7 @@
 name: Auto-merge Version Packages PR
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
@@ -13,17 +13,35 @@ jobs:
     if: github.event.pull_request.title == 'Version Packages'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR HEAD
+      - name: Checkout PR HEAD (no credentials)
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Validate expected versions and consumed changesets
+      - name: Validate Version Packages PR contents
         shell: bash
         run: |
           set -euo pipefail
-          echo "Validating package versions match npm-published expectations..."
+          BASE_SHA='${{ github.event.pull_request.base.sha }}'
+          HEAD_SHA='${{ github.event.pull_request.head.sha }}'
+          echo "Validating changed files are limited to allowed paths..."
+          mapfile -t files < <(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
+          allowed='^(package.json|pnpm-lock.yaml|packages/.+/(package.json|CHANGELOG.md)|\\.changeset/.*)$'
+          for f in "${files[@]}"; do
+            if ! [[ "$f" =~ $allowed ]]; then
+              echo "Unexpected file change: $f" >&2
+              exit 1
+            fi
+          done
+
+          echo "Checking that all changed package.json files include a version change..."
+          for pj in $(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "**/package.json"); do
+            git diff "$BASE_SHA" "$HEAD_SHA" -- "$pj" | grep '"version"' >/dev/null || { echo "No version change in $pj" >&2; exit 1; }
+          done
+
+          echo "Validating target reconciliation versions for this run..."
           jq -r '.version' packages/create-appsyncjs/package.json | grep -x '0.2.0'
           jq -r '.version' packages/dynamo/package.json | grep -x '1.0.0'
           jq -r '.version' packages/cli/package.json | grep -x '1.0.3'
@@ -33,8 +51,6 @@ jobs:
           test ! -f .changeset/update-create-appsyncjs-to-sst-v3.md
           test ! -f .changeset/scaffold-outputs-to-build-and-coverage.md
 
-          echo "(Optional) tooling-only changeset should remain:"
-          test -f .changeset/no-release-pr-12-charlie-config.md
 
       - name: Check PR mergeability and required checks
         id: gate
@@ -50,25 +66,42 @@ jobs:
               core.setFailed(`PR targets ${pr.base.ref}, expected main`);
               return;
             }
+            const isInternal = pr.head.repo.full_name === `${owner}/${repo}`;
+            const isBot = pr.user.login === 'github-actions[bot]';
+            if (!isInternal || !isBot) {
+              core.info('Not an internal Version Packages PR by GitHub Actions bot; skipping auto-merge.');
+              core.setOutput('should_merge', 'false');
+              return;
+            }
             if (pr.draft) {
               core.info('PR is draft; will not merge yet.');
               core.setOutput('should_merge', 'false');
               return;
             }
-
-            // Combined status (legacy contexts)
+            // Combined status (legacy contexts): success if present+success, or absent
             const { data: status } = await github.rest.repos.getCombinedStatusForRef({ owner, repo, ref: pr.head.sha });
-            const contextsOk = status.state === 'success' || status.total_count === 0; // allow when no statuses exist
+            const contextsPresent = status.total_count > 0;
+            const contextsOk = !contextsPresent || status.state === 'success';
 
-            // Checks API
+            // Checks API: success if present+all success, or absent
             const checks = await github.rest.checks.listForRef({ owner, repo, ref: pr.head.sha });
-            const checksOk = checks.data.check_runs.every(cr => ['success', 'skipped', 'neutral', 'cancelled'].includes(cr.conclusion ?? ''));
+            const checksPresent = checks.data.check_runs.length > 0;
+            const checksOk = !checksPresent || checks.data.check_runs.every(cr => cr.conclusion === 'success');
 
-            // Mergeability
-            if (pr.mergeable_state && pr.mergeable_state !== 'clean') {
-              core.info(`mergeable_state=${pr.mergeable_state}; not merging yet.`);
-              core.setOutput('should_merge', 'false');
-              return;
+            // Wait for a definitive mergeable_state and require 'clean'
+            let attempts = 0;
+            while (attempts < 10) {
+              const { data: latest } = await github.rest.pulls.get({ owner, repo, pull_number: number });
+              if (latest.mergeable_state && latest.mergeable_state !== 'unknown') {
+                if (latest.mergeable_state !== 'clean') {
+                  core.info(`mergeable_state=${latest.mergeable_state}; not merging.`);
+                  core.setOutput('should_merge', 'false');
+                  return;
+                }
+                break;
+              }
+              await new Promise(r => setTimeout(r, 3000));
+              attempts++;
             }
 
             const gateOk = contextsOk && checksOk;
