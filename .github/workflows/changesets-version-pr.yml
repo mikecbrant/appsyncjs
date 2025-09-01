@@ -6,7 +6,10 @@ permissions:
   pull-requests: write
 
 on:
+  # Allow direct invocation from other workflows
   workflow_call:
+  # Enable manual runs from the Actions tab / gh CLI
+  workflow_dispatch:
 
 concurrency:
   group: changesets-${{ github.ref }}
