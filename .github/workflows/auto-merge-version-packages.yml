@@ -1,0 +1,88 @@
+name: Auto-merge Version Packages PR
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  validate-and-merge:
+    if: github.event.pull_request.title == 'Version Packages'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR HEAD
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Validate expected versions and consumed changesets
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Validating package versions match npm-published expectations..."
+          jq -r '.version' packages/create-appsyncjs/package.json | grep -x '0.2.0'
+          jq -r '.version' packages/dynamo/package.json | grep -x '1.0.0'
+          jq -r '.version' packages/cli/package.json | grep -x '1.0.3'
+          jq -r '.version' packages/test-utils/package.json | grep -x '1.2.5'
+
+          echo "Ensuring release-driving changesets are removed in this PR..."
+          test ! -f .changeset/update-create-appsyncjs-to-sst-v3.md
+          test ! -f .changeset/scaffold-outputs-to-build-and-coverage.md
+
+          echo "(Optional) tooling-only changeset should remain:"
+          test -f .changeset/no-release-pr-12-charlie-config.md
+
+      - name: Check PR mergeability and required checks
+        id: gate
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const number = context.payload.pull_request.number;
+
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: number });
+            if (pr.base.ref !== 'main') {
+              core.setFailed(`PR targets ${pr.base.ref}, expected main`);
+              return;
+            }
+            if (pr.draft) {
+              core.info('PR is draft; will not merge yet.');
+              core.setOutput('should_merge', 'false');
+              return;
+            }
+
+            // Combined status (legacy contexts)
+            const { data: status } = await github.rest.repos.getCombinedStatusForRef({ owner, repo, ref: pr.head.sha });
+            const contextsOk = status.state === 'success' || status.total_count === 0; // allow when no statuses exist
+
+            // Checks API
+            const checks = await github.rest.checks.listForRef({ owner, repo, ref: pr.head.sha });
+            const checksOk = checks.data.check_runs.every(cr => ['success', 'skipped', 'neutral', 'cancelled'].includes(cr.conclusion ?? ''));
+
+            // Mergeability
+            if (pr.mergeable_state && pr.mergeable_state !== 'clean') {
+              core.info(`mergeable_state=${pr.mergeable_state}; not merging yet.`);
+              core.setOutput('should_merge', 'false');
+              return;
+            }
+
+            const gateOk = contextsOk && checksOk;
+            core.setOutput('should_merge', gateOk ? 'true' : 'false');
+
+      - name: Merge Version Packages PR
+        if: steps.gate.outputs.should_merge == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              merge_method: 'squash',
+            });
+            core.info('Merged Version Packages PR.');
