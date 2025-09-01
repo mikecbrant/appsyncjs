@@ -1,5 +1,4 @@
 /* global sst */
-// Storage-related infrastructure for the scaffold
 // Creates a single-table DynamoDB table used by the AppSync API
 
 export function createStorage({ tableName }: { tableName: string }) {
