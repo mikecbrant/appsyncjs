@@ -13,11 +13,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Default, least-privilege token permissions; individual jobs elevate as needed
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Test (Node ${{ matrix.node-version }})
-    # Skip CI for the auto-generated "Version Packages" commit on push, but run on PR events
-    if: github.event_name != 'push' || (github.event.head_commit && github.event.head_commit.author && github.event.head_commit.author.name != 'GitHub Actions')
+    # Skip CI only for the auto-generated Changesets "Version Packages" commit on push
+    if: ${{ !(github.event_name == 'push' && (github.event.head_commit && contains(github.event.head_commit.message, 'Version Packages'))) }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -166,6 +170,8 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Ensure npm publish has auth
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -euo pipefail
           echo "Publishing packages to npm..."
@@ -181,10 +187,8 @@ jobs:
     name: Post-release — open/update Version Packages PR
     needs: [release]
     if: needs.release.result == 'success' && needs.release.outputs.published == 'true'
-    # This job should not cause the overall workflow to fail. If it flakes, a later push will retry.
-    continue-on-error: true
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
     uses: ./.github/workflows/changesets-version-pr.yml
     secrets: inherit
