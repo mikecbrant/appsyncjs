@@ -47,6 +47,6 @@ jobs:
           # Run the standard version command inside the PR branch
           version: pnpm changeset version
           title: Version Packages
-          commit: chore: version packages
+          commit: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

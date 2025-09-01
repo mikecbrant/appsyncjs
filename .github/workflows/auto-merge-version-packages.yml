@@ -51,7 +51,6 @@ jobs:
           test ! -f .changeset/update-create-appsyncjs-to-sst-v3.md
           test ! -f .changeset/scaffold-outputs-to-build-and-coverage.md
 
-
       - name: Check PR mergeability and required checks
         id: gate
         uses: actions/github-script@v7
