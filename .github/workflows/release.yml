@@ -86,10 +86,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Configure git
-        run: |
-          git config user.name "GitHubActions"
-          git config user.email "<>"
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -116,13 +112,9 @@ jobs:
               pnpm changeset pre exit
               IS_PRERELEASE=false
           fi
+          # Publish only; do not attempt to commit or push version bumps here.
           pnpm changeset status
-          pnpm changeset version
           pnpm changeset publish
-          git add .
-          PACKAGE_VERSION=$(sed -nE 's/^\s*"version": "(.*?)",$/\1/p' ./package.json)
-          git commit -m "$PACKAGE_VERSION" --no-verify
-          git push --follow-tags --no-verify || echo "unable to push git tag--perhaps its already set?"
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
           IS_PRERELEASE: ${{ needs.determine_release.outputs.is_prerelease }}
