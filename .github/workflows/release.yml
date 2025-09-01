@@ -183,5 +183,8 @@ jobs:
     if: needs.release.result == 'success' && needs.release.outputs.published == 'true'
     # This job should not cause the overall workflow to fail. If it flakes, a later push will retry.
     continue-on-error: true
+    permissions:
+      contents: read
+      pull-requests: write
     uses: ./.github/workflows/changesets-version-pr.yml
     secrets: inherit
