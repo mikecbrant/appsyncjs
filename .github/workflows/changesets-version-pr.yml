@@ -1,4 +1,4 @@
-name: Changesets — Version PR
+name: Changesets — Version PR (reusable)
 
 # Explicit token permissions for Changesets to open/update the Version Packages PR
 permissions:
@@ -6,9 +6,7 @@ permissions:
   pull-requests: write
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
 
 concurrency:
   group: changesets-${{ github.ref }}
