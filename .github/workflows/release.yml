@@ -1,4 +1,4 @@
-name: CI — test → gate → release → post-release PR
+name: CI — test → gate → release
 on:
   push:
     branches:
@@ -20,8 +20,6 @@ permissions:
 jobs:
   test:
     name: Test (Node ${{ matrix.node-version }})
-    # Skip CI only for the auto-generated Changesets "Version Packages" commit on push
-    if: ${{ !(github.event_name == 'push' && (github.event.head_commit && contains(github.event.head_commit.message, 'Version Packages'))) }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -127,6 +125,23 @@ jobs:
           fi
           echo "should_release=$SHOULD_RELEASE" >> "$GITHUB_OUTPUT"
 
+  # Run the Changesets Version PR step BEFORE any publish attempt. This job
+  # opens/updates the "Version Packages" PR when there are pending changesets.
+  #
+  # Intended order after this change:
+  #   (a) changeset versioning opens the PR; (b) tests run on that PR;
+  #   (c) the PR auto‑merges on green checks; (d) the merge commit on main
+  #       is a version-bump commit, which triggers the Release job below.
+  pre_release_version_pr:
+    name: Versioning — open/update Version Packages PR
+    needs: [determine_release]
+    if: ${{ github.event_name == 'push' && needs.determine_release.outputs.is_release_branch == 'true' && needs.determine_release.outputs.is_version_bump_commit != 'true' }}
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/changesets-version-pr.yml
+    secrets: inherit
+
   release:
     name: Release
     needs: [test, determine_release]
@@ -183,12 +198,6 @@ jobs:
             echo "published=false" >> "$GITHUB_OUTPUT"
           fi
 
-  post_release_version_pr:
-    name: Post-release — open/update Version Packages PR
-    needs: [release]
-    if: needs.release.result == 'success' && needs.release.outputs.published == 'true'
-    permissions:
-      contents: write
-      pull-requests: write
-    uses: ./.github/workflows/changesets-version-pr.yml
-    secrets: inherit
+  # Note: We intentionally removed the post‑release Version PR step. Versioning
+  # now happens first (job above), and publishing only occurs on the merged
+  # version‑bump commit on main.

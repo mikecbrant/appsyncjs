@@ -7,11 +7,14 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  checks: read
 
 jobs:
   validate-and-merge:
     if: github.event.pull_request.title == 'Version Packages'
     runs-on: ubuntu-latest
+    # Give enough time for matrix tests to finish before we time out waiting
+    timeout-minutes: 60
     steps:
       - name: Checkout PR HEAD (no credentials)
         uses: actions/checkout@v4
@@ -31,27 +34,67 @@ jobs:
           allowed='^(package.json|pnpm-lock.yaml|packages/.+/(package.json|CHANGELOG.md)|\\.changeset/.*)$'
           for f in "${files[@]}"; do
             if ! [[ "$f" =~ $allowed ]]; then
-              echo "Unexpected file change: $f" >&2
+              echo "Unexpected file change in Version Packages PR: $f" >&2
               exit 1
             fi
           done
 
-          echo "Checking that all changed package.json files include a version change..."
+          echo "Checking that each changed package.json includes a version change..."
           for pj in $(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "**/package.json"); do
             git diff "$BASE_SHA" "$HEAD_SHA" -- "$pj" | grep '"version"' >/dev/null || { echo "No version change in $pj" >&2; exit 1; }
           done
 
-          echo "Validating target reconciliation versions for this run..."
-          jq -r '.version' packages/create-appsyncjs/package.json | grep -x '0.2.0'
-          jq -r '.version' packages/dynamo/package.json | grep -x '1.0.0'
-          jq -r '.version' packages/cli/package.json | grep -x '1.0.3'
-          jq -r '.version' packages/test-utils/package.json | grep -x '1.2.5'
+      - name: Wait for required checks (tests) to pass
+        id: wait_checks
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const sha = context.payload.pull_request.head.sha;
+            const deadline = Date.now() + 30 * 60 * 1000; // 30 minutes
 
-          echo "Ensuring release-driving changesets are removed in this PR..."
-          test ! -f .changeset/update-create-appsyncjs-to-sst-v3.md
-          test ! -f .changeset/scaffold-outputs-to-build-and-coverage.md
+            function pickTestRuns(checkRuns) {
+              // Our required checks are the matrix test jobs named like: "Test (Node 20.x)"
+              return checkRuns.filter(cr => cr.name && cr.name.startsWith('Test (Node '));
+            }
 
-      - name: Check PR mergeability and required checks
+            async function getTestStatus() {
+              const { data } = await github.rest.checks.listForRef({ owner, repo, ref: sha, per_page: 100 });
+              const tests = pickTestRuns(data.check_runs);
+              if (tests.length === 0) return { present: false };
+              const incomplete = tests.filter(cr => cr.status !== 'completed');
+              const failed = tests.filter(cr => cr.status === 'completed' && cr.conclusion !== 'success');
+              if (failed.length > 0) return { present: true, complete: true, success: false, details: failed.map(f => `${f.name}:${f.conclusion}`) };
+              if (incomplete.length > 0) return { present: true, complete: false };
+              // All completed: ensure all succeeded
+              const notSuccess = tests.filter(cr => cr.conclusion !== 'success');
+              return { present: true, complete: true, success: notSuccess.length === 0 };
+            }
+
+            core.info('Waiting for required test checks to succeed...');
+            while (Date.now() < deadline) {
+              const status = await getTestStatus();
+              if (!status.present) {
+                core.info('No test checks found yet; sleeping 10s...');
+                await new Promise(r => setTimeout(r, 10_000));
+                continue;
+              }
+              if (!status.complete) {
+                core.info('Tests still running; sleeping 15s...');
+                await new Promise(r => setTimeout(r, 15_000));
+                continue;
+              }
+              if (status.success) {
+                core.info('All required test checks succeeded.');
+                return;
+              }
+              core.setFailed('One or more required test checks failed.');
+              return;
+            }
+            core.setFailed('Timed out waiting for required test checks.');
+
+      - name: Check PR mergeability
         id: gate
         uses: actions/github-script@v7
         with:
@@ -59,7 +102,6 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const number = context.payload.pull_request.number;
-
             const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: number });
             if (pr.base.ref !== 'main') {
               core.setFailed(`PR targets ${pr.base.ref}, expected main`);
@@ -77,34 +119,28 @@ jobs:
               core.setOutput('should_merge', 'false');
               return;
             }
-            // Combined status (legacy contexts): success if present+success, or absent
-            const { data: status } = await github.rest.repos.getCombinedStatusForRef({ owner, repo, ref: pr.head.sha });
-            const contextsPresent = status.total_count > 0;
-            const contextsOk = !contextsPresent || status.state === 'success';
-
-            // Checks API: success if present+all success, or absent
-            const checks = await github.rest.checks.listForRef({ owner, repo, ref: pr.head.sha });
-            const checksPresent = checks.data.check_runs.length > 0;
-            const checksOk = !checksPresent || checks.data.check_runs.every(cr => cr.conclusion === 'success');
-
-            // Wait for a definitive mergeable_state and require 'clean'
+            // Poll for a definitive mergeable_state and require 'clean'
             let attempts = 0;
+            let latest;
             while (attempts < 10) {
-              const { data: latest } = await github.rest.pulls.get({ owner, repo, pull_number: number });
+              ({ data: latest } = await github.rest.pulls.get({ owner, repo, pull_number: number }));
               if (latest.mergeable_state && latest.mergeable_state !== 'unknown') {
-                if (latest.mergeable_state !== 'clean') {
-                  core.info(`mergeable_state=${latest.mergeable_state}; not merging.`);
-                  core.setOutput('should_merge', 'false');
-                  return;
-                }
                 break;
               }
               await new Promise(r => setTimeout(r, 3000));
               attempts++;
             }
-
-            const gateOk = contextsOk && checksOk;
-            core.setOutput('should_merge', gateOk ? 'true' : 'false');
+            if (!latest || !latest.mergeable_state || latest.mergeable_state === 'unknown') {
+              core.info('mergeable_state is still unknown after polling; not merging.');
+              core.setOutput('should_merge', 'false');
+              return;
+            }
+            if (latest.mergeable_state !== 'clean') {
+              core.info(`mergeable_state=${latest.mergeable_state}; not merging.`);
+              core.setOutput('should_merge', 'false');
+              return;
+            }
+            core.setOutput('should_merge', 'true');
 
       - name: Merge Version Packages PR
         if: steps.gate.outputs.should_merge == 'true'
