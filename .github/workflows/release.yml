@@ -197,7 +197,3 @@ jobs:
           else
             echo "published=false" >> "$GITHUB_OUTPUT"
           fi
-
-  # Note: We intentionally removed the post‑release Version PR step. Versioning
-  # now happens first (job above), and publishing only occurs on the merged
-  # version‑bump commit on main.

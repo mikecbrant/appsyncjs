@@ -13,8 +13,8 @@ jobs:
   validate-and-merge:
     if: github.event.pull_request.title == 'Version Packages'
     runs-on: ubuntu-latest
-    # Give enough time for matrix tests to finish before we time out waiting
-    timeout-minutes: 60
+    # Ceiling for the entire job, aligned with the checks wait below
+    timeout-minutes: 15
     steps:
       - name: Checkout PR HEAD (no credentials)
         uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const sha = context.payload.pull_request.head.sha;
-            const deadline = Date.now() + 30 * 60 * 1000; // 30 minutes
+            const deadline = Date.now() + 15 * 60 * 1000; // 15 minutes
 
             function pickTestRuns(checkRuns) {
               // Our required checks are the matrix test jobs named like: "Test (Node 20.x)"
