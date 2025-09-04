@@ -124,7 +124,7 @@ const main = async () => {
 	const answers = {
 		APP_NAME: defaultAppName,
 		DESCRIPTION: `${defaultAppName} AppSync service`,
-		AWS_REGION: 'us-east-1',
+		REGION: 'us-east-1',
 		ENTITY: 'Example',
 		TABLE_NAME: defaultAppName,
 	};
