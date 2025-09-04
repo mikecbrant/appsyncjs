@@ -21,7 +21,6 @@ function substitute(content, vars) {
 	const region = vars.AWS_REGION ?? vars.REGION;
 	return content
 		.replaceAll('__APP_NAME__', vars.APP_NAME)
-		.replaceAll('__AWS_REGION__', region ?? '')
 		.replaceAll('__REGION__', region ?? '')
 		.replaceAll('__ENTITY__', vars.ENTITY)
 		.replaceAll('__TABLE_NAME__', vars.TABLE_NAME)
