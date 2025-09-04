@@ -135,7 +135,7 @@ const main = async () => {
 
 	if (process.stdin.isTTY) {
 		// Order matters; later defaults depend on earlier answers
-		answers.APP_NAME = await promptInput('APP_NAME', defaultAppName);
+		answers.APP_NAME = await promptInput('Application name', defaultAppName);
 		if (!parsed.description) {
 			answers.DESCRIPTION = await promptInput(
 				'Repo description',
