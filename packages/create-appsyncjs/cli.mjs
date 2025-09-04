@@ -73,10 +73,10 @@ const promptConfirm = async (message) => {
 	return v === 'y' || v === 'yes';
 };
 
-const gitIsRepo = () =>
+const gitIsRepo = (cwd) =>
 	new Promise((resolve) => {
 		const child = spawn('git', ['rev-parse', '--is-inside-work-tree'], {
-			cwd: process.cwd(),
+			cwd,
 			stdio: ['ignore', 'pipe', 'ignore'],
 		});
 		let out = '';
@@ -85,10 +85,10 @@ const gitIsRepo = () =>
 		child.on('error', () => resolve(false));
 	});
 
-const gitWorkingTreeDirty = () =>
+const gitWorkingTreeDirty = (cwd) =>
 	new Promise((resolve) => {
 		const child = spawn('git', ['status', '--porcelain'], {
-			cwd: process.cwd(),
+			cwd,
 			stdio: ['ignore', 'pipe', 'ignore'],
 		});
 		let out = '';
@@ -150,8 +150,8 @@ const main = async () => {
 		}
 
 		// Optional: if inside a Git repo and working tree is dirty, double-confirm
-		const inRepo = await gitIsRepo();
-		const isDirty = inRepo ? await gitWorkingTreeDirty() : false;
+		const inRepo = await gitIsRepo(dest);
+		const isDirty = inRepo ? await gitWorkingTreeDirty(dest) : false;
 		if (isDirty) {
 			const proceed = await promptConfirm(
 				'Git working tree is not clean (uncommitted changes detected). Continue anyway?',
