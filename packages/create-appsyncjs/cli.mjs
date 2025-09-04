@@ -145,7 +145,7 @@ const main = async () => {
 		answers.AWS_REGION = await promptInput('AWS_REGION', answers.AWS_REGION);
 		if (!parsed.entity) {
 			answers.ENTITY = await promptInput(
-				'ENTITY — name of the first entity to create (singular, PascalCase)',
+				'Name of the first entity to create (singular, PascalCase)',
 				'Example',
 			);
 		}
