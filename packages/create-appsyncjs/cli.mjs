@@ -138,7 +138,7 @@ const main = async () => {
 		answers.APP_NAME = await promptInput('APP_NAME', defaultAppName);
 		if (!parsed.description) {
 			answers.DESCRIPTION = await promptInput(
-				'DESCRIPTION',
+				'Repo description',
 				`${answers.APP_NAME} AppSync service`,
 			);
 		}
