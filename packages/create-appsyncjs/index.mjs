@@ -17,33 +17,45 @@ const promptFor = async (question, defaultValue) => {
 	return (asked ?? '').trim() || defaultValue;
 };
 
-const buildContext = async ({ templateDir, dest, entity, description }) => {
-	const appName = path.basename(dest).replace(/[^a-zA-Z0-9-_]/g, '-');
+const buildContext = async ({
+	templateDir,
+	dest,
+	entity,
+	description,
+	answers,
+}) => {
+	const appNameDefault = path.basename(dest).replace(/[^a-zA-Z0-9-_]/g, '-');
+	const appName = answers?.APP_NAME ?? appNameDefault;
 
-	// Interactive prompts
-	const defaultEntity = 'User';
+	// Values may be provided by the caller (cli prompts). If not, prompt or use defaults.
+	const entityDefault = 'Example';
 	const entityInput =
+		answers?.ENTITY ??
 		entity ??
 		(process.stdin.isTTY
-			? await promptFor('Entity name (singular, PascalCase)?', defaultEntity)
-			: defaultEntity);
-	// naive pluralization (append 's') for table and potential list naming; acceptable for scaffold
-	const tableName = `${entityInput}s`;
+			? await promptFor('Entity name (singular, PascalCase)?', entityDefault)
+			: entityDefault);
+
+	const tableDefault = appName;
+	const tableName = answers?.TABLE_NAME ?? tableDefault;
+
+	const descDefault = `${appName} AppSync service`;
 	const desc =
+		answers?.DESCRIPTION ??
 		description ??
 		(process.stdin.isTTY
-			? await promptFor(
-					'Project description?',
-					`SST AppSync + DynamoDB starter with ${entityInput} CRUD using @mikecbrant/appsyncjs-dynamo`,
-				)
-			: `SST AppSync + DynamoDB starter with ${entityInput} CRUD using @mikecbrant/appsyncjs-dynamo`);
+			? await promptFor('Project description?', descDefault)
+			: descDefault);
+
+	const regionDefault = 'us-east-1'; // pending reviewer confirmation
+	const region = answers?.AWS_REGION ?? regionDefault;
 
 	return {
 		templateDir,
 		dest,
 		vars: {
 			APP_NAME: appName,
-			REGION: 'us-east-1',
+			AWS_REGION: region,
 			ENTITY: entityInput,
 			TABLE_NAME: tableName,
 			DESCRIPTION: desc,
@@ -51,8 +63,14 @@ const buildContext = async ({ templateDir, dest, entity, description }) => {
 	};
 };
 
-const create = async ({ templateDir, dest, entity, description }) => {
-	const ctx = await buildContext({ templateDir, dest, entity, description });
+const create = async ({ templateDir, dest, entity, description, answers }) => {
+	const ctx = await buildContext({
+		templateDir,
+		dest,
+		entity,
+		description,
+		answers,
+	});
 	await generate(ctx);
 
 	// Post-scaffold: upgrade deps to latest in the generated project

@@ -73,6 +73,19 @@ const promptConfirm = async (message) => {
 	return v === 'y' || v === 'yes';
 };
 
+const promptInput = async (message, def = '') => {
+	const rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout,
+	});
+	const answer = await rl
+		.question(`${message}${def ? ` (${def})` : ''}: `)
+		.catch(() => '')
+		.finally(() => rl.close());
+	const v = (answer ?? '').trim();
+	return v.length > 0 ? v : def;
+};
+
 const gitIsRepo = (cwd) =>
 	new Promise((resolve) => {
 		const child = spawn('git', ['rev-parse', '--is-inside-work-tree'], {
@@ -106,13 +119,49 @@ const main = async () => {
 	const __dirname = path.dirname(fileURLToPath(import.meta.url));
 	const templateDir = path.resolve(__dirname, 'scaffold');
 
-	// Build minimal vars to derive file name substitutions for conflict detection
+	// Gather scaffold variables via interactive prompts (source of truth for this run)
+	const defaultAppName = sanitizeAppName(dest);
+	const answers = {
+		APP_NAME: defaultAppName,
+		DESCRIPTION: `${defaultAppName} AppSync service`,
+		AWS_REGION: 'us-east-1', // pending reviewer confirmation; see PR comment
+		ENTITY: 'Example',
+		TABLE_NAME: defaultAppName,
+	};
+
+	// Seed answers from any provided CLI flags for non-interactive/automation cases
+	if (parsed.entity) answers.ENTITY = parsed.entity;
+	if (parsed.description) answers.DESCRIPTION = parsed.description;
+
+	if (process.stdin.isTTY) {
+		// Order matters; later defaults depend on earlier answers
+		answers.APP_NAME = await promptInput('APP_NAME', defaultAppName);
+		if (!parsed.description) {
+			answers.DESCRIPTION = await promptInput(
+				'DESCRIPTION',
+				`${answers.APP_NAME} AppSync service`,
+			);
+		}
+		answers.AWS_REGION = await promptInput('AWS_REGION', answers.AWS_REGION);
+		if (!parsed.entity) {
+			answers.ENTITY = await promptInput(
+				'ENTITY — name of the first entity to create (singular, PascalCase)',
+				'Example',
+			);
+		}
+		answers.TABLE_NAME = await promptInput(
+			'TABLE_NAME — name of the DynamoDB table',
+			answers.APP_NAME,
+		);
+	}
+
+	// Vars used for file-name substitutions during conflict detection
 	const vars = {
-		APP_NAME: sanitizeAppName(dest),
-		REGION: 'us-east-1',
-		ENTITY: parsed.entity || 'User',
-		TABLE_NAME: `${parsed.entity || 'User'}s`,
-		DESCRIPTION: parsed.description || '',
+		APP_NAME: answers.APP_NAME,
+		AWS_REGION: answers.AWS_REGION,
+		ENTITY: answers.ENTITY,
+		TABLE_NAME: answers.TABLE_NAME,
+		DESCRIPTION: answers.DESCRIPTION,
 	};
 
 	// Compute prospective file paths from the scaffold
@@ -166,8 +215,10 @@ const main = async () => {
 	await create({
 		templateDir,
 		dest,
-		entity: parsed.entity,
-		description: parsed.description,
+		// feed prompt-derived values forward so generation matches conflict preview
+		entity: answers.ENTITY,
+		description: answers.DESCRIPTION,
+		answers,
 	});
 	console.log(`✔ Created scaffold in ${dest}`);
 	console.log('\nNext steps:');
