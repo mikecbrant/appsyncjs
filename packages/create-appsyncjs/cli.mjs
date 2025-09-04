@@ -150,7 +150,7 @@ const main = async () => {
 			);
 		}
 		answers.TABLE_NAME = await promptInput(
-			'TABLE_NAME — name of the DynamoDB table',
+			'Name of the DynamoDB table',
 			answers.APP_NAME,
 		);
 	}
