@@ -18,7 +18,7 @@ const TEXT_EXTS = new Set([
 
 function substitute(content, vars) {
 	// Prefer new key AWS_REGION; support legacy __REGION__ tokens in templates during transition
-	const region = vars.AWS_REGION ?? vars.REGION;
+	const region = vars.REGION;
 	return content
 		.replaceAll('__APP_NAME__', vars.APP_NAME)
 		.replaceAll('__REGION__', region ?? '')
