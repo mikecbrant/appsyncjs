@@ -155,17 +155,8 @@ const main = async () => {
 		);
 	}
 
-	// Vars used for file-name substitutions during conflict detection
-	const vars = {
-		APP_NAME: answers.APP_NAME,
-		AWS_REGION: answers.AWS_REGION,
-		ENTITY: answers.ENTITY,
-		TABLE_NAME: answers.TABLE_NAME,
-		DESCRIPTION: answers.DESCRIPTION,
-	};
-
 	// Compute prospective file paths from the scaffold
-	const templateFiles = await listTemplateFiles(templateDir, vars);
+	const templateFiles = await listTemplateFiles(templateDir, answers);
 	const conflicts = [];
 	for (const rel of templateFiles) {
 		const to = path.join(dest, rel);
@@ -212,14 +203,7 @@ const main = async () => {
 		}
 	}
 
-	await create({
-		templateDir,
-		dest,
-		// feed prompt-derived values forward so generation matches conflict preview
-		entity: answers.ENTITY,
-		description: answers.DESCRIPTION,
-		answers,
-	});
+	await create({ templateDir, dest, answers });
 	console.log(`✔ Created scaffold in ${dest}`);
 	console.log('\nNext steps:');
 	console.log(`  1. cd ${path.relative(cwd, dest)}`);
