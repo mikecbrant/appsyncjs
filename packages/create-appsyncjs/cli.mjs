@@ -149,7 +149,7 @@ const main = async () => {
 			process.exit(1);
 		}
 
-		// Optional: if inside a Git repo and working tree is dirty, double-confirm
+		// If inside a Git repo and working tree is dirty, double-confirm
 		const inRepo = await gitIsRepo(dest);
 		const isDirty = inRepo ? await gitWorkingTreeDirty(dest) : false;
 		if (isDirty) {
