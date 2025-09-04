@@ -47,7 +47,7 @@ const buildContext = async ({
 			? await promptFor('Project description?', descDefault)
 			: descDefault);
 
-	const regionDefault = 'us-east-1'; // pending reviewer confirmation
+	const regionDefault = 'us-east-1';
 	const region = answers?.AWS_REGION ?? regionDefault;
 
 	return {
