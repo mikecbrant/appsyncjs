@@ -142,7 +142,7 @@ const main = async () => {
 				`${answers.APP_NAME} AppSync service`,
 			);
 		}
-		answers.AWS_REGION = await promptInput('AWS_REGION', answers.AWS_REGION);
+		answers.REGION = await promptInput('AWS region', answers.REGION);
 		if (!parsed.entity) {
 			answers.ENTITY = await promptInput(
 				'Name of the first entity to create (singular, PascalCase)',
