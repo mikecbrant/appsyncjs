@@ -19,7 +19,7 @@ const TEXT_EXTS = new Set([
 function substitute(content, vars) {
 	return content
 		.replaceAll('__APP_NAME__', vars.APP_NAME)
-		.replaceAll('__REGION__', vars.region)
+		.replaceAll('__REGION__', vars.REGION)
 		.replaceAll('__ENTITY__', vars.ENTITY)
 		.replaceAll('__TABLE_NAME__', vars.TABLE_NAME)
 		.replaceAll('__DESCRIPTION__', vars.DESCRIPTION);
