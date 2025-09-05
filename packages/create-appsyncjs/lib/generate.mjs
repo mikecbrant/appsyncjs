@@ -17,7 +17,6 @@ const TEXT_EXTS = new Set([
 ]);
 
 function substitute(content, vars) {
-	const region = vars.REGION;
 	return content
 		.replaceAll('__APP_NAME__', vars.APP_NAME)
 		.replaceAll('__REGION__', region ?? '')
