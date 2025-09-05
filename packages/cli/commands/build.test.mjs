@@ -1,6 +1,7 @@
-import { afterEach, describe, expect, it } from 'vitest';
 import { glob } from 'glob';
 import { rm } from 'node:fs/promises';
+import { afterEach, describe, expect, it } from 'vitest';
+
 import build from './build.mjs';
 
 const testFileDir = 'test-files/';

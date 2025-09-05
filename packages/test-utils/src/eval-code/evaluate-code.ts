@@ -76,7 +76,7 @@ export type FileEvaluationRequest = {
 
 const evaluateFile = async ({
 	file,
-	context,
+	context = {},
 	function: fn,
 }: FileEvaluationRequest): Promise<EvaluationResponse> =>
 	readFile(file, { encoding: 'utf8' }).then((code) =>

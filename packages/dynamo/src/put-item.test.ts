@@ -62,4 +62,19 @@ describe('putItem', () => {
 		});
 		expect(() => putItem({ key, item })).toThrow('boom');
 	});
+
+	it('omits expressionValues when item has no updatable attributes', () => {
+		const key = { id: '123' };
+		const item = {} as Record<string, unknown>;
+		// First call (for values mapping) returns null so we omit expressionValues; subsequent calls behave normally
+		util.dynamodb.toMapValues.mockImplementationOnce(() => null);
+		const request = putItem({ key, item });
+
+		expect(request.operation).toBe('UpdateItem');
+		expect(request.key).toEqual({ id: { S: '123' } });
+		expect(request.update).toBeDefined();
+		expect(request.update!.expression).toBe('SET ');
+		// expressionValues should be absent when there are no values to map
+		expect('expressionValues' in request.update!).toBe(false);
+	});
 });

@@ -11,7 +11,7 @@ type SupportedOutput = EvaluateCodeCommandOutput;
 
 const runtimeRegion = process.env.AWS_REGION;
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const isThrottleError = (err: Error): boolean =>
 	err.name === 'TooManyRequestsException' ||
@@ -41,7 +41,7 @@ class ThrottledAppsyncClient extends AppSyncClient {
 			...otherOpts
 		} = opts ?? {};
 		super({
-			region,
+			...(region !== undefined ? { region } : {}),
 			...otherOpts,
 		});
 		this.maxRetries = maxRetries;
@@ -67,7 +67,7 @@ class ThrottledAppsyncClient extends AppSyncClient {
 		return this.send(command);
 	}
 
-	async send(command: SupportedCommand): Promise<SupportedOutput> {
+	override async send(command: SupportedCommand): Promise<SupportedOutput> {
 		await this.throttle();
 		return super.send(command).catch((err) => {
 			if (isThrottleError(err)) {
@@ -95,7 +95,7 @@ class ThrottledAppsyncClient extends AppSyncClient {
 	}
 }
 
-let client;
+let client: ThrottledAppsyncClient | undefined;
 
 const getThrottledClient = (
 	opts?: ThrottledAppsyncClientConfig,

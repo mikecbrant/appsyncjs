@@ -290,5 +290,35 @@ describe('evaluate-code', () => {
 				runtime,
 			});
 		});
+
+		it('executes evaluateCode without context (omits undefined)', async () => {
+			const input: Omit<FileEvaluationRequest, 'context'> = {
+				file: 'foo',
+				function: 'response',
+			};
+
+			const result = await evaluateFile(input as FileEvaluationRequest);
+
+			const commandOutput = getCommandOutput();
+
+			expect(result).toEqual({
+				evaluationResult: JSON.parse(commandOutput.evaluationResult!),
+				logs: commandOutput.logs,
+			});
+
+			expect(fsMock.readFile).toBeCalledWith(input.file, { encoding: 'utf8' });
+
+			const calls = mockClient.send.mock.calls;
+
+			expect(calls.length).toBeGreaterThan(0);
+			const [command] = calls.at(-1)!;
+
+			expect(command.input).toEqual({
+				code: getFileContent(),
+				context: JSON.stringify({}),
+				function: input.function,
+				runtime,
+			});
+		});
 	});
 });

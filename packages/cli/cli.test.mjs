@@ -1,7 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { execSync } from 'node:child_process';
 import { glob } from 'glob';
+import { execSync } from 'node:child_process';
 import { rm } from 'node:fs/promises';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const testFileDir = 'test-files/';
 const testIncludeGlob = testFileDir + '**/*.ts';

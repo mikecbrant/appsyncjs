@@ -30,30 +30,32 @@
 		"fmt:check": "prettier . --check --debug-check",
 		"lint": "pnpm -r lint",
 		"lint:check": "pnpm -r lint:check",
+		"typecheck:tsgo": "tsgo check",
 		"preinstall": "npx only-allow pnpm",
 		"test": "pnpm build && pnpm lint && pnpm -r test",
 		"up": "pnpm update --include-workspace-root"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.29.6",
-		"@typescript-eslint/eslint-plugin": "^8.41.0",
-		"@typescript-eslint/parser": "^8.41.0",
-		"eslint": "^8.57.1",
-		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-import": "^2.32.0",
-		"eslint-plugin-n": "^17.21.3",
+		"@mikecbrant/eslint-config": "^0.1.0",
+		"@mikecbrant/tsconfig": "^0.1.0",
+		"@typescript/native-preview": "^7.0.0-dev.0",
+		"eslint": "9.0.0",
+		"eslint-plugin-import": "^2.29.0",
+		"eslint-plugin-unused-imports": "^4.0.0",
 		"prettier": "^3.6.2",
 		"typescript": "^5.9.2"
 	},
 	"overrides": {
-		"eslint": "^8.57.1",
+		"eslint": "9.0.0",
 		"typescript": "^5.9.2",
 		"vitest": "^3.2.4"
 	},
 	"engines": {
-		"node": "^20.11.0 || ^22.11.0 || ^24.5.0",
+		"node": "^22.11.0 || ^24.5.0",
 		"npm": "none",
-		"pnpm": "^10.15.0",
+		"pnpm": "^10.15.1",
 		"yarn": "none"
-	}
+	},
+	"packageManager": "pnpm@10.15.1"
 }

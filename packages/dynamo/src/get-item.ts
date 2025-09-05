@@ -18,7 +18,8 @@ const getItem = (props: GetItemProps): DynamoDBGetItemRequest => {
 	};
 
 	if (returnedFields.length > 0) {
-		request.projection = buildProjectionExpression(returnedFields);
+		const projection = buildProjectionExpression(returnedFields);
+		if (projection) request.projection = projection;
 	}
 
 	return request;
