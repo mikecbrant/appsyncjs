@@ -1,6 +1,6 @@
 {
 	"name": "@mikecbrant/create-appsyncjs",
-	"version": "0.2.1",
+	"version": "1.0.0",
 	"description": "Scaffold generator for an SST-based AWS AppSync + DynamoDB repo with example User CRUD using @mikecbrant/appsyncjs-dynamo and tests using @mikecbrant/appsyncjs-test-utils.",
 	"type": "module",
 	"main": "index.mjs",
