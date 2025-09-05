@@ -1,11 +1,9 @@
 {
-	"extends": "../../tsconfig.json",
+	"extends": "@mikecbrant/tsconfig/node-library",
 	"compilerOptions": {
 		"rootDir": "src",
 		"baseUrl": "../../",
-		"outDir": "./dist",
-		"noEmit": false,
-		"declaration": true
+		"outDir": "./dist"
 	},
 	"include": ["src"],
 	"exclude": ["**/*.test.*", "test-files"]

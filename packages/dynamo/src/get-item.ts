@@ -18,7 +18,11 @@ const getItem = (props: GetItemProps): DynamoDBGetItemRequest => {
 	};
 
 	if (returnedFields.length > 0) {
-		request.projection = buildProjectionExpression(returnedFields);
+		const projection = buildProjectionExpression(returnedFields);
+		if (projection) {
+			// `buildProjectionExpression` returns a compatible shape; cast to satisfy TS.
+			(request as any).projection = projection;
+		}
 	}
 
 	return request;

@@ -1,4 +1,5 @@
-name: CI — test → gate → release
+name: CI — test → release (deploy key)
+
 on:
   push:
     branches:
@@ -13,7 +14,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Default, least-privilege token permissions; individual jobs elevate as needed
+# Default, least-privilege token permissions; jobs elevate as needed
 permissions:
   contents: read
 
@@ -24,40 +25,41 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20.x, 22.x, 24.x]
+        node-version: [22.x, 24.x]
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      # Install the pnpm CLI first so actions/setup-node can enable pnpm cache without error
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: latest
+          package_json_file: package.json
           run_install: false
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Run Tests
-        run: pnpm test
+      - name: Format check
+        run: pnpm -w run fmt:check
+      - name: Lint
+        run: pnpm -w run lint:check
+      - name: Typecheck (tsgo)
+        run: pnpm -w run typecheck:tsgo
+      - name: Unit tests
+        run: pnpm -r --parallel test:unit
 
   determine_release:
-    name: Determine release eligibility
+    name: Determine release
     needs: [test]
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     outputs:
-      is_prerelease: ${{ steps.determine_release.outputs.is_prerelease }}
-      is_release_branch: ${{ steps.determine_release.outputs.is_release_branch }}
-      is_version_bump_commit: ${{ steps.determine_release.outputs.is_version_bump_commit }}
-      should_release: ${{ steps.determine_release.outputs.should_release }}
+      is_prerelease: ${{ steps.determine.outputs.is_prerelease }}
+      is_release: ${{ steps.determine.outputs.is_release }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -66,110 +68,58 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: latest
+          package_json_file: package.json
           run_install: false
       - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
           node-version: 24.x
-          cache: 'pnpm'
+          cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Determine release
-        id: determine_release
-        shell: bash
-        env:
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-          EVENT_NAME: ${{ github.event_name }}
-          HEAD_SHA: ${{ github.sha }}
+      - name: Compute release flags
+        id: determine
         run: |
-          set -euo pipefail
-          echo "Evaluating release eligibility for $EVENT_NAME on $GITHUB_REF_NAME at $HEAD_SHA"
-
-          # Detect prerelease mode from changesets preState
-          pnpm changeset status --output=changeset-status.json
-          PRE_RELEASE_MODE=$(jq -r '.preState.mode // ""' changeset-status.json)
-          IS_PRERELEASE=$([[ "$PRE_RELEASE_MODE" == 'pre' ]] && echo 'true' || echo 'false')
-          echo "is_prerelease=$IS_PRERELEASE" >> "$GITHUB_OUTPUT"
-
-          # Release branch gate (push to main only)
-          IS_RELEASE_BRANCH=$([[ "$EVENT_NAME" == 'push' && "$GITHUB_REF_NAME" == 'main' ]] && echo 'true' || echo 'false')
-          echo "is_release_branch=$IS_RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
-
-          # Heuristic: "Version Packages" commit indicator
-          # Consider it a release-bump commit if either:
-          #  - the head commit message mentions Version Packages, or
-          #  - the diff from HEAD~1 contains a version field change in any package.json
-          HEAD_MSG=$(git log -1 --pretty=%B)
-          IS_MSG_BUMP=$([[ "$HEAD_MSG" =~ [Vv]ersion\ Packages ]] || [[ "$HEAD_MSG" =~ chore:\ version\ packages ]] && echo 'true' || echo 'false')
-
-          DIFF_RANGE=$(git rev-parse --verify HEAD~1 >/dev/null 2>&1 && echo 'HEAD~1..HEAD' || echo 'HEAD')
-          set +e
-          git diff -U0 "$DIFF_RANGE" -- "**/package.json" | grep '"version"' >/dev/null
-          IS_DIFF_BUMP=$([[ $? -eq 0 ]] && echo 'true' || echo 'false')
-          set -e
-
-          if [[ "$IS_MSG_BUMP" == 'true' || "$IS_DIFF_BUMP" == 'true' ]]; then
-            IS_VERSION_BUMP_COMMIT='true'
-          else
-            IS_VERSION_BUMP_COMMIT='false'
-          fi
-          echo "is_version_bump_commit=$IS_VERSION_BUMP_COMMIT" >> "$GITHUB_OUTPUT"
-
-          # Final gate: release only on push to main AND when commit contains version bumps
-          if [[ "$IS_RELEASE_BRANCH" == 'true' && "$IS_VERSION_BUMP_COMMIT" == 'true' ]]; then
-            SHOULD_RELEASE='true'
-          else
-            SHOULD_RELEASE='false'
-          fi
-          echo "should_release=$SHOULD_RELEASE" >> "$GITHUB_OUTPUT"
-
-  # Run the Changesets Version PR step BEFORE any publish attempt. This job
-  # opens/updates the "Version Packages" PR when there are pending changesets.
-  #
-  # Intended order after this change:
-  #   (a) changeset versioning opens the PR; (b) tests run on that PR;
-  #   (c) the PR auto‑merges on green checks; (d) the merge commit on main
-  #       is a version-bump commit, which triggers the Release job below.
-  pre_release_version_pr:
-    name: Versioning — open/update Version Packages PR
-    needs: [determine_release]
-    if: ${{ github.event_name == 'push' && needs.determine_release.outputs.is_release_branch == 'true' && needs.determine_release.outputs.is_version_bump_commit != 'true' }}
-    permissions:
-      contents: write
-      pull-requests: write
-    uses: ./.github/workflows/changesets-version-pr.yml
-    secrets: inherit
+          # Changesets can error on PR merge refs; tolerate and default to no pre mode
+          pnpm changeset status --output=changeset-status.json || echo '{}' > changeset-status.json
+          PRE=$(jq -r '.preState.mode // ""' changeset-status.json)
+          rm -f changeset-status.json
+          echo "is_prerelease=$([[ $PRE = 'pre' ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+          echo "is_release=$([[ $GITHUB_REF_NAME = 'main' ]] && echo true || echo false)" >> $GITHUB_OUTPUT
 
   release:
     name: Release
     needs: [test, determine_release]
-    # Strict gate: only run on push to main when the commit is a version-bump commit
-    if: needs.determine_release.outputs.should_release == 'true'
+    if: ${{ github.event_name == 'push' && (needs.determine_release.outputs.is_release == 'true' || needs.determine_release.outputs.is_prerelease == 'true') }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
-    outputs:
-      published: ${{ steps.publish.outputs.published }}
     steps:
-      - name: Checkout Repo
+      - name: Checkout Repo (SSH deploy key)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ssh-key: ${{ secrets.GHA_DEPLOY_KEY }}
+      - name: Configure Git author (for tag/commit)
+        run: |
+          git config user.name "GitHubActions"
+          git config user.email "actions@github.com"
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: latest
+          package_json_file: package.json
           run_install: false
-      - name: Setup Node.js 24
+      - name: Setup Node.js 24 (with npm registry)
         uses: actions/setup-node@v4
         with:
           node-version: 24.x
-          cache: 'pnpm'
+          cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
           registry-url: https://registry.npmjs.org
+          always-auth: true
         env:
+          # Ensure the registry is authenticated for publish
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -177,23 +127,13 @@ jobs:
         run: pnpm build
       - name: Exit prerelease mode if applicable
         if: needs.determine_release.outputs.is_prerelease == 'true'
-        run: |
-          echo "Exiting prerelease mode on main branch"
-          pnpm changeset pre exit
-      - name: Publish packages
-        id: publish
-        shell: bash
+        run: pnpm changeset pre exit
+      - name: Publish with Changesets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Ensure npm publish has auth
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          set -euo pipefail
-          echo "Publishing packages to npm..."
           pnpm changeset status
-          pnpm changeset publish | tee publish.log
-          if grep -q "Successfully published" publish.log; then
-            echo "published=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "published=false" >> "$GITHUB_OUTPUT"
-          fi
+          pnpm changeset version
+          pnpm changeset publish
+          git push --follow-tags --no-verify

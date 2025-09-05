@@ -34,22 +34,17 @@
 	"scripts": {
 		"build": "rm -rf ./dist && tsc && pnpm test:esm",
 		"clean": "rm -rf ./coverage ./dist ./node_modules",
-		"lint": "eslint --fix --ext js,cjs,mjs,ts",
-		"lint:check": "eslint --ext js,cjs,mjs,ts",
+		"lint": "eslint --fix . --no-error-on-unmatched-pattern",
+		"lint:check": "eslint . --no-error-on-unmatched-pattern",
 		"test:esm": "node ./dist/index.js",
 		"test:unit": "vitest run",
 		"test": "pnpm lint && pnpm build && pnpm test:unit"
 	},
 	"devDependencies": {
-		"@aws-appsync/eslint-plugin": "^2.0.2",
 		"@aws-appsync/utils": "2.0.3",
 		"@mikecbrant/appsyncjs-test-utils": "workspace:*",
 		"@types/node": "^24.3.0",
-		"@typescript-eslint/parser": "^8.41.0",
 		"@vitest/coverage-v8": "^3.2.4",
-		"eslint": "^8.57.1",
-		"eslint-config-prettier": "^10.1.8",
-		"prettier": "^3.6.2",
 		"typescript": "^5.9.2",
 		"vitest": "^3.2.4"
 	},

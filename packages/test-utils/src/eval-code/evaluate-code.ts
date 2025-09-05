@@ -80,7 +80,11 @@ const evaluateFile = async ({
 	function: fn,
 }: FileEvaluationRequest): Promise<EvaluationResponse> =>
 	readFile(file, { encoding: 'utf8' }).then((code) =>
-		evaluateCode({ code, context, function: fn }),
+		evaluateCode({
+			code,
+			function: fn,
+			...(context !== undefined ? { context } : {}),
+		}),
 	);
 
 class EvaluateCodeError extends AggregateError {

@@ -1,16 +1,17 @@
 {
-	"include": ["**/*"],
-	"exclude": [
-		"**/node_modules",
-		"**/*.test/*",
-		"**/coverage",
-		"**/dist",
-		"packages/build/**"
-	],
+	"extends": "@mikecbrant/tsconfig/base",
 	"compilerOptions": {
 		"module": "esnext",
 		"moduleResolution": "bundler",
-		"noEmit": true,
-		"target": "esnext"
-	}
+		"target": "esnext",
+		"noEmit": true
+	},
+	"include": ["packages/**/*.{ts,tsx}", "*.ts"],
+	"exclude": [
+		"**/node_modules",
+		"**/coverage",
+		"**/dist",
+		"packages/build/**",
+		"packages/create-appsyncjs/scaffold/**"
+	]
 }

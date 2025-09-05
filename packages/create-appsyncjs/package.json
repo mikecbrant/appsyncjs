@@ -43,8 +43,8 @@
 	"scripts": {
 		"build": "echo 'no build'",
 		"clean": "rm -rf ./node_modules",
-		"lint": "eslint --fix --ext js,cjs,mjs,ts",
-		"lint:check": "eslint --ext js,cjs,mjs,ts",
+		"lint": "eslint --fix . --no-error-on-unmatched-pattern",
+		"lint:check": "eslint . --no-error-on-unmatched-pattern",
 		"test": "echo 'no tests'"
 	},
 	"engines": {

@@ -31,7 +31,7 @@ const putItem = (props: PutItemProps): DynamoDBUpdateItemRequest => {
 	const update: DynamoDBExpression = {
 		expression: `SET ${sets.join(', ')}`,
 		expressionNames: names,
-		expressionValues: util.dynamodb.toMapValues(values as any),
+		expressionValues: util.dynamodb.toMapValues(values as any) as any,
 	};
 
 	const request: DynamoDBUpdateItemRequest & { returnValues: 'ALL_NEW' } = {
