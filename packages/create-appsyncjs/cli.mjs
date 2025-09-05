@@ -1,9 +1,9 @@
 #! /usr/bin/env node
+import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { spawn } from 'node:child_process';
 import readline from 'node:readline/promises';
+import { fileURLToPath } from 'node:url';
 
 import { create } from './index.mjs';
 

@@ -1,8 +1,8 @@
-import type { DynamoDBExpression } from '@aws-appsync/utils';
+import type { DynamoDBProjectionExpression } from '@aws-appsync/utils';
 
 const buildProjectionExpression = (
 	fields: string[],
-): DynamoDBExpression | undefined => {
+): DynamoDBProjectionExpression | undefined => {
 	if (!fields || typeof fields !== 'object' || fields?.length < 1) {
 		return undefined;
 	}

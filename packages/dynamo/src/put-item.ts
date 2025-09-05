@@ -28,11 +28,17 @@ const putItem = (props: PutItemProps): DynamoDBUpdateItemRequest => {
 		sets.push(`${nameKey} = ${valueKey}`);
 	}
 
+	const mappedValues = util.dynamodb.toMapValues(values as any);
+
 	const update: DynamoDBExpression = {
 		expression: `SET ${sets.join(', ')}`,
 		expressionNames: names,
-		expressionValues: util.dynamodb.toMapValues(values as any) as any,
-	};
+	} as DynamoDBExpression;
+
+	if (mappedValues) {
+		// Assign only when non-null to satisfy exact optional property semantics
+		(update as any).expressionValues = mappedValues;
+	}
 
 	const request: DynamoDBUpdateItemRequest & { returnValues: 'ALL_NEW' } = {
 		operation: 'UpdateItem',

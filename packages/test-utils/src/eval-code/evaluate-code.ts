@@ -76,15 +76,11 @@ export type FileEvaluationRequest = {
 
 const evaluateFile = async ({
 	file,
-	context,
+	context = {},
 	function: fn,
 }: FileEvaluationRequest): Promise<EvaluationResponse> =>
 	readFile(file, { encoding: 'utf8' }).then((code) =>
-		evaluateCode({
-			code,
-			function: fn,
-			...(context !== undefined ? { context } : {}),
-		}),
+		evaluateCode({ code, context, function: fn }),
 	);
 
 class EvaluateCodeError extends AggregateError {
