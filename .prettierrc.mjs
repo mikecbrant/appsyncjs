@@ -1,8 +1,2 @@
-export default {
-	semi: true,
-	useTabs: true,
-	singleQuote: true,
-	bracketSpacing: true,
-	bracketSameLine: false,
-	trailingComma: 'all',
-};
+import config from '@mikecbrant/prettier-config';
+export default { ...config, semi: true };

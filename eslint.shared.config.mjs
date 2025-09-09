@@ -1,2 +1,2 @@
-import config from '@mikecbrant/eslint-config'
-export default config
+import config from '@mikecbrant/eslint-config/eslint';
+export default config;
