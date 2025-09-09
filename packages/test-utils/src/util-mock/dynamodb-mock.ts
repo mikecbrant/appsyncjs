@@ -1,5 +1,6 @@
-import type { JsonArray, JsonObject, JsonValue } from 'type-fest';
 import { type Mock, vi } from 'vitest';
+
+import type { JsonArray, JsonObject, JsonValue } from 'type-fest';
 
 type BinaryAttribute = { B: string };
 
@@ -33,18 +34,23 @@ const convert = (val: JsonValue): ListAndMapValueAttributes => {
 	if (val === null) {
 		return toNullImplementation();
 	}
+
 	if (val === true || val === false) {
 		return toBooleanImplementation(val);
 	}
+
 	if (typeof val === 'string') {
 		return toStringImplementation(val);
 	}
+
 	if (typeof val === 'number') {
 		return toNumberImplementation(val);
 	}
+
 	if (Array.isArray(val)) {
 		return toListImplementation(val);
 	}
+
 	return toMapImplementation(val as JsonObject);
 };
 
@@ -127,7 +133,14 @@ const toS3ObjectImplementation = (
 	version?: string,
 ): StringAttribute =>
 	toStringImplementation(
-		JSON.stringify({ s3: { key, bucket, region, version } }),
+		JSON.stringify({
+			s3: {
+				key,
+				bucket,
+				region,
+				version,
+			},
+		}),
 	);
 
 const toS3Object = vi.fn(toS3ObjectImplementation);

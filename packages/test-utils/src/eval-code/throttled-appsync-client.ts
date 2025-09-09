@@ -5,20 +5,21 @@ import {
 	type EvaluateCodeCommandOutput,
 } from '@aws-sdk/client-appsync';
 
-// limiting to scope of commands currently used in this tooling
+// Limiting to scope of commands currently used in this tooling
 type SupportedCommand = EvaluateCodeCommand;
 type SupportedOutput = EvaluateCodeCommandOutput;
 
 const runtimeRegion = process.env.AWS_REGION;
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = async (ms: number) =>
+	new Promise((resolve) => setTimeout(resolve, ms));
 
 const isThrottleError = (err: Error): boolean =>
 	err.name === 'TooManyRequestsException' ||
 	err.message === 'Too Many Requests';
 
 type ThrottledAppsyncClientConfig = AppSyncClientConfig & {
-	// for send request throttling
+	// For send request throttling
 	maxRetries?: number;
 	opsPerSecond?: number;
 };
@@ -69,20 +70,19 @@ class ThrottledAppsyncClient extends AppSyncClient {
 
 	override async send(command: SupportedCommand): Promise<SupportedOutput> {
 		await this.throttle();
-		return super.send(command).catch((err) => {
+		return super.send(command).catch(async (err) => {
 			if (isThrottleError(err)) {
 				console.warn('Command send throttled', command, err);
 				return this.retry(command);
 			}
+
 			console.error('Command send error', command, err);
 			throw err;
 		});
 	}
 
 	async throttle(): Promise<void> {
-		if (!this.firstRequestAt) {
-			this.firstRequestAt = Date.now();
-		}
+		this.firstRequestAt ||= Date.now();
 		this.requestCount++;
 
 		const executeAfter =
@@ -100,9 +100,7 @@ let client: ThrottledAppsyncClient | undefined;
 const getThrottledClient = (
 	opts?: ThrottledAppsyncClientConfig,
 ): ThrottledAppsyncClient => {
-	if (!client) {
-		client = new ThrottledAppsyncClient(opts);
-	}
+	client ||= new ThrottledAppsyncClient(opts);
 	return client;
 };
 

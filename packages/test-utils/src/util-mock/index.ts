@@ -1,17 +1,18 @@
-import type { Mock } from 'vitest';
-import { appendError, error } from './errors.js';
-import { authType } from './type-and-pattern-matching.js';
-import { autoKsuid, autoUlid, autoUuid } from './ids.js';
+import { unauthorized } from './authorization.js';
+import dynamodb from './dynamodb-mock.js';
 import {
 	base64Decode,
 	base64Encode,
 	urlDecode,
 	urlEncode,
 } from './encoding.js';
-import dynamodb from './dynamodb-mock.js';
+import { appendError, error } from './errors.js';
+import { autoKsuid, autoUlid, autoUuid } from './ids.js';
 import runtime from './runtime.js';
 import time from './time.js';
-import { unauthorized } from './authorization.js';
+import { authType } from './type-and-pattern-matching.js';
+
+import type { Mock } from 'vitest';
 
 type UtilMock = {
 	appendError: Mock;
