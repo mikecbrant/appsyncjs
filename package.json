@@ -37,17 +37,19 @@
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.29.6",
-		"@mikecbrant/eslint-config": "^0.1.0",
+		"@mikecbrant/eslint-config": "^1.0.0",
+		"@mikecbrant/prettier-config": "^0.1.0",
 		"@mikecbrant/tsconfig": "^0.1.0",
 		"@typescript/native-preview": "^7.0.0-dev.0",
-		"eslint": "9.0.0",
+		"eslint": "^9.34.0",
 		"eslint-plugin-import": "^2.29.0",
 		"eslint-plugin-unused-imports": "^4.0.0",
 		"prettier": "^3.6.2",
-		"typescript": "^5.9.2"
+		"typescript": "^5.9.2",
+		"eslint-config-prettier": "^9.1.0"
 	},
 	"overrides": {
-		"eslint": "9.0.0",
+		"eslint": "9.34.0",
 		"typescript": "^5.9.2",
 		"vitest": "^3.2.4"
 	},

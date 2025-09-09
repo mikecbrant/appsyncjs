@@ -1,0 +1,7 @@
+Repository automation notes
+
+- Path: packages/dynamo
+- Directive: Do not apply shared tooling (ESLint/Prettier/tsconfig) or bulk lint/format/config changes to this directory.
+- Rationale: This package targets the APPSYNC_JS runtime and has special constraints that differ from the rest of the repo.
+
+Automation and refactors should treat `packages/dynamo` as an opt-out area for shared tooling. Any changes here must be explicitly requested in a focused PR.

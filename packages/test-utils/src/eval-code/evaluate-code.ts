@@ -1,4 +1,3 @@
-import type { JsonValue, OverrideProperties } from 'type-fest';
 import {
 	type AppSyncRuntime,
 	type CodeError,
@@ -8,7 +7,10 @@ import {
 	type EvaluateCodeResponse,
 } from '@aws-sdk/client-appsync';
 import { readFile } from 'node:fs/promises';
+
 import { getThrottledClient } from './throttled-appsync-client.js';
+
+import type { JsonValue } from 'type-fest';
 
 export type EvaluationResponse = {
 	error?: { message: string };
@@ -79,7 +81,7 @@ const evaluateFile = async ({
 	context = {},
 	function: fn,
 }: FileEvaluationRequest): Promise<EvaluationResponse> =>
-	readFile(file, { encoding: 'utf8' }).then((code) =>
+	readFile(file, { encoding: 'utf8' }).then(async (code) =>
 		evaluateCode({ code, context, function: fn }),
 	);
 
@@ -104,7 +106,7 @@ const handleEvaluateError = (
 		throw new EvaluateCodeError(details, message);
 	}
 
-	// we have encountered an unexpected runtime error
+	// We have encountered an unexpected runtime error
 	// we want to treat this differently than error messages
 	// from util.error & util.appendError calls
 	if (/^code\.js:\d+:\d+:/.test(message)) {
